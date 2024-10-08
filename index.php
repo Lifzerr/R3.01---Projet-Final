@@ -47,18 +47,55 @@
     </nav>
 
     <div class="container">
-        <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="Image indisponible">
-            <div class="card-body">
-                <h5 class="card-title">Titre</h5>
-                <p class="card-text">Description</p>
-                <a href="#" class="btn btn-primary">Ajouter au panier</a>
-                <a href="#" class="btn btn-secondary">Details</a>
-            </div>
-            <div class="card-footer">
-                Prix : xxx€
+
+        <?php 
+            // Connexion à la BD
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "bd-r3.01";
+
+            $conn = new mysqli($servername, $username, $password, $dbname);
+
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+
+            // Exécuter la requête
+            $sql = "SELECT * FROM Article
+                LEFT JOIN 
+                    Comporter ON Article.id = Comporter.articleId
+                LEFT JOIN 
+                    Image ON Comporter.imageId = Image.id;";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows == 0) {
+                echo "pas d'articles disponibles !";
+            } 
+        ?>
+
+        <div class="row row-cols-3">
+            <?php foreach($result as $article) { ?>
+            <div class="col-md-4 mb-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="<?= $article['chemin'] ?>" class="card-img-top" alt="<?= $article['alt'] ?>">
+                    <div class="card-body">
+                        <h5 class="card-title"><?= $article['titre'] ?></h5>
+                        <p class="card-text"><?= $article['description'] ?></p>
+                        <a href="#" class="btn btn-primary">Ajouter au panier</a>
+                        <a href="#" class="btn btn-secondary">Details</a>
+                    </div>
+                    <div class="card-footer">
+                        Prix : <?= $article['prix'] ?>€
+                    </div>
+                </div>
             </div>
         </div>
+
+        <?php 
+            }
+            $conn->close(); 
+        ?>
     </div>
 
 
