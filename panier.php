@@ -19,7 +19,7 @@
                     <a class="nav-link" aria-current="page" href="index.php">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="panier.php">Panier</a>
+                    <a class="nav-link" href="#">Panier</a>
                 </li>
                 <?php
                     session_start();
@@ -45,23 +45,6 @@
             </div>
         </div>
     </nav>
-
-    <div class="container">
-        <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="Image indisponible">
-            <div class="card-body">
-                <h5 class="card-title">Titre</h5>
-                <p class="card-text">Feur.</p>
-                <a href="#" class="btn btn-primary">Ajouter au panier</a>
-                <a href="#" class="btn btn-secondary">Details</a>
-            </div>
-            <div class="card-footer">
-                Prix : 10 000€
-            </div>
-        </div>
-    </div>
-
-
     <script src="js/script.js"></script>
 </body>
 </html>
