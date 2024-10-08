@@ -49,6 +49,7 @@
                 <h5 class="card-title">Titre</h5>
                 <p class="card-text">Feur.</p>
                 <a href="#" class="btn btn-primary">Ajouter au panier</a>
+                <a href="#" class="btn btn-secondary">Details</a>
             </div>
             <div class="card-footer">
                 Prix : 10 000€

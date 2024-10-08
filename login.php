@@ -15,7 +15,7 @@
             header ('location: dashboard.php');
         }
         else {
-            echo '<body onLoad="alert(\'Membre non reconnu...\')">';
+            echo '<body onLoad="alert(\'Utilisateur non reconnu\')">';
             // puis on le redirige vers la page d'accueil
             echo '<meta http-equiv="refresh" content="0;URL=login.html">';
         }
