@@ -36,11 +36,14 @@
 
     <div class="container">
         <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
+            <img src="..." class="card-img-top" alt="Image indisponible">
             <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">Titre</h5>
+                <p class="card-text">Feur.</p>
+                <a href="#" class="btn btn-primary">Ajouter au panier</a>
+            </div>
+            <div class="card-footer">
+                Prix : 10 000€
             </div>
         </div>
     </div>
