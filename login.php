@@ -12,12 +12,12 @@
             $_SESSION['login'] = $_POST['login'];
             $_SESSION['pwd'] = $_POST['pwd'];
             // on redirige notre visiteur vers une page de notre section membre
-            header ('location: page_membre.php');
+            header ('location: dashboard.php');
         }
         else {
             echo '<body onLoad="alert(\'Membre non reconnu...\')">';
             // puis on le redirige vers la page d'accueil
-            echo '<meta http-equiv="refresh" content="0;URL=index.html">';
+            echo '<meta http-equiv="refresh" content="0;URL=login.html">';
         }
     } else {
         session_start ();
