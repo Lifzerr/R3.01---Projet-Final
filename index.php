@@ -51,12 +51,12 @@
             <img src="..." class="card-img-top" alt="Image indisponible">
             <div class="card-body">
                 <h5 class="card-title">Titre</h5>
-                <p class="card-text">Feur.</p>
+                <p class="card-text">Description</p>
                 <a href="#" class="btn btn-primary">Ajouter au panier</a>
                 <a href="#" class="btn btn-secondary">Details</a>
             </div>
             <div class="card-footer">
-                Prix : 10 000€
+                Prix : xxx€
             </div>
         </div>
     </div>
