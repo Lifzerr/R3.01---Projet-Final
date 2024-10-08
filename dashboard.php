@@ -6,6 +6,6 @@
     <title>Dashboard</title>
 </head>
 <body>
-    
+    <p>Bienvenue sur dashboard.php</p>
 </body>
 </html>

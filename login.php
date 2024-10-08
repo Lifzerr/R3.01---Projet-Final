@@ -1,7 +1,7 @@
 <?php
     // On définit un login et un mot de passe de base
-    $login_valide = "moi";
-    $pwd_valide = "lemien";
+    $login_valide = "root";
+    $pwd_valide = "root";
 
     // on teste si nos variables sont définies
     if (isset($_POST['login']) && isset($_POST['pwd'])) {
