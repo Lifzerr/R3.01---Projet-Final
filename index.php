@@ -91,7 +91,7 @@
             <?php foreach($result as $article) { ?>
             <div class="col-md-4 mb-4">
                 <div class="card" style="width: 18rem; min-height: 250px;">
-                    <img src="<?=redimage($article['chemin'], 'vignettes/' . $article['titre'], 50, 50);?>" class="card-img-top" alt="<?= $article['alt'] ?>">
+                    <img src="<?=redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200);?>" class="card-img-top" alt="<?= $article['alt'] ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?= $article['titre'] ?></h5>
                         <p class="card-text"><?= $article['description'] ?></p>
