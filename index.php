@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>War.net | Vente de matériel militaire</title>
     <link rel="stylesheet" href="node_modules\bootstrap\dist\css\bootstrap.css">
+    <script src="node_modules\bootstrap\js\src\modal.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -90,20 +91,38 @@
                         <h5 class="card-title"><?= $article['titre'] ?></h5>
                         <p class="card-text"><?= $article['description'] ?></p>
                         <a href="#" class="btn btn-primary">Ajouter au panier</a>
-                        <a href="#" class="btn btn-secondary">Details</a>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-target="myModal">Details</button>
                     </div>
                     <div class="card-footer">
                         Prix : <?= $article['prix'] ?>€
                     </div>
                 </div>
             </div>
+            
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            
             <?php 
             }
             $conn->close(); 
         ?>
         </div>
-
-        
     </div>
 
 
