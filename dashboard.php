@@ -27,7 +27,7 @@
                 <?php
                     if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
                         echo '<li class="nav-item">';
-                        echo '<a class="nav-link" href="dashboard.php">Dashboard</a>';
+                        echo '<a class="nav-link selected" href="dashboard.php">Dashboard</a>';
                         echo '</li>';
                     }
                 ?>

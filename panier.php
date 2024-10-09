@@ -17,19 +17,19 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                 <a class="navbar-brand" href="index.php">war.net</a>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="index.php">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Panier</a>
-                </li>
-                <?php
-                    if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
-                        echo '<li class="nav-item">';
-                        echo '<a class="nav-link" href="dashboard.php">Dashboard</a>';
-                        echo '</li>';
-                    }
-                ?>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="index.php">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link selected" href="#">Panier</a>
+                    </li>
+                    <?php
+                        if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
+                            echo '<li class="nav-item">';
+                            echo '<a class="nav-link" href="dashboard.php">Dashboard</a>';
+                            echo '</li>';
+                        }
+                    ?>
                 </ul>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">

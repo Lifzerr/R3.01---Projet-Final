@@ -20,7 +20,7 @@
                 <a class="navbar-brand" href="index.php">war.net</a>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="index.php">Accueil</a>
+                    <a class="nav-link selected" aria-current="page" href="index.php">Accueil</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="panier.php">Panier</a>
