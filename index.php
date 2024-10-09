@@ -51,6 +51,10 @@
 
     <div class="container">
 
+        <div id="titre">
+            <h1 class="lead">Articles de la 2nde Guerre Mondiale</h1>
+        </div>
+
         <?php 
             // Connexion à la BD
             $servername = "lakartxela.iutbayonne.univ-pau.fr";
@@ -80,10 +84,10 @@
             } 
         ?>
 
-        <div class="row row-cols-3">
+        <div class="row">
             <?php foreach($result as $article) { ?>
             <div class="col-md-4 mb-4">
-                <div class="card" style="width: 18rem;">
+                <div class="card" style="width: 18rem; min-height: 250px;">
                     <img src="<?= $article['chemin'] ?>" class="card-img-top" alt="<?= $article['alt'] ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?= $article['titre'] ?></h5>
