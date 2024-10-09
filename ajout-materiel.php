@@ -1,3 +1,14 @@
+<?php 
+    require_once('fonctions.php');
+
+    $conn = connectionBDLocalhost();
+    mysqli_set_charset($conn, "utf8mb4");
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -32,15 +43,6 @@
                     <option value="" disabled selected>Sélectionner une catégorie</option>
                     <!-- Remplir avec les options de catégorie -->
                     <?php
-                        require_once('fonctions.php');
-
-                        $conn = connectionBDLocalhost();
-                        mysqli_set_charset($conn, "utf8mb4");
-
-                        if ($conn->connect_error) {
-                            die("Connection failed: " . $conn->connect_error);
-                        }
-
                         $sql = "SELECT * FROM Categorie;";
                         $result = $conn->query($sql);
 
@@ -49,6 +51,7 @@
                         } else if ($result->num_rows == 0) {
                             echo "<option>pas de catégories disponibles !</option>";
                         } else {
+                            // Afficher les options
                             foreach($result as $categorie){
                                 echo "<option value='" . $categorie['id'] . "'>" . $categorie['nom'] . "</option>";
                             }
@@ -69,6 +72,43 @@
             <button type="submit" class="btn btn-primary">Ajouter le matériel</button>
         </form>
     </div>
+
+    <?php
+            if (
+                isset($_POST['titre']) &&
+                isset($_POST['description']) &&
+                isset($_POST['prix']) &&
+                isset($_POST['quantiteDispo']) &&
+                isset($_POST['categorie']) &&
+                isset($_POST['chemin']) &&
+                isset($_FILES['image'])
+            ) {
+                
+                $titre = $_POST['titre'];
+                $description = $_POST['description'];
+                $prix = $_POST['prix'];
+                $quantiteDispo = $_POST['quantiteDispo'];
+                $categorie = $_POST['categorie'];
+                $chemin = $_POST['chemin'];
+                $image = $_FILES['image'];
+
+                // Ajout de l'article dans la BD
+                $sql = "INSERT INTO Article (titre, description, prix, quantiteDispo, categorieId, imageId) 
+                VALUES ('$titre', '$description', '$prix', '$quantiteDispo', '$categorie', <ID_DE_L_IMAGE>)";
+
+                if ($conn->query($sql) === TRUE) {
+                    echo "Nouvel article ajouté avec succès !";
+                } else {
+                    echo "Erreur : " . $sql . "<br>" . $conn->error;
+                }
+            } else {
+                echo "Veuillez remplir tous les champs du formulaire.";
+            }
+            
+
+
+
+    ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc5KAIl0S1EICeIm8g7G1p6hsUdeK0N6B/Xm99LHE" crossorigin="anonymous"></script>
