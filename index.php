@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +26,6 @@
                     <a class="nav-link" href="panier.php">Panier</a>
                 </li>
                 <?php
-                    session_start();
                     if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
                         echo '<li class="nav-item">';
                         echo '<a class="nav-link" href="dashboard.php">Dashboard</a>';
@@ -50,10 +53,10 @@
 
         <?php 
             // Connexion à la BD
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "bd-r3.01";
+            $servername = "lakartxela.iutbayonne.univ-pau.fr";
+            $username = "mbourciez_bd";
+            $password = "mbourciez_bd";
+            $dbname = "mbourciez_bd";
 
             $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -62,12 +65,15 @@
             }
 
             // Exécuter la requête
-            $sql = "SELECT * FROM Article
+            $sql = "SELECT * FROM article A
                 LEFT JOIN 
-                    Comporter ON Article.id = Comporter.articleId
+                    comporter C ON A.id = C.articleId
                 LEFT JOIN 
-                    Image ON Comporter.imageId = Image.id;";
+                    image I ON C.imageId = I.id;";
             $result = $conn->query($sql);
+            if (!$result) {
+                die("Erreur lors de l'exécution de la requête : " . $conn->error);
+            }
 
             if ($result->num_rows == 0) {
                 echo "pas d'articles disponibles !";
