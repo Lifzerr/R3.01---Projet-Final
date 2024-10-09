@@ -47,9 +47,13 @@
     }
     ?>
 
-    <div class="container">
+    <div class="container mt-5">
         <div id="main" class="card card-body">
-        <h2 class="title">Liste des articles</h2>
+            <div class="card-header d-flex justify-content-between">
+                <h2 class="title d-md-inline-flex">Liste des articles</h2>
+                <button type="button" class="btn btn-primary d-md-inline-flex mb-2">Ajouter un article</button>
+            </div>
+        
 
         <ul id="items" class="list-group">
             <li class="list-group-item">
@@ -74,6 +78,7 @@
                     $dbname = "mbourciez_pro";
 
                     $conn = new mysqli($servername, $username, $password, $dbname);
+                    mysqli_set_charset($conn, "utf8mb4");
 
                     if ($conn->connect_error) {
                         die("Connection failed: " . $conn->connect_error);
@@ -102,8 +107,8 @@
                     <td><?= $article['prix']?></td>
                     <td><?= $article['quantiteDispo']?></td>
                     <td><?= $article['chemin']?></td>
-                    <td> <button class="btn btn-warning btn-sm float-right btnModifier">Modifier</button> </td>
-                    <td> <button class="btn btn-danger btn-sm float-right btnSupprimer">Supprimer</button> </td>
+                    <td> <button class="btn btn-warning btn-sm float-right btnModifier" data-id="<?= $article['id'] ?>">Modifier</button> </td>
+                    <td> <button class="btn btn-danger btn-sm float-right btnSupprimer" data-id="<?= $article['id'] ?>">Supprimer</button> </td>
                 </tr>
                 <?php 
                     }
