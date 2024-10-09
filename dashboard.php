@@ -24,9 +24,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="panier.php">Panier</a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                </li> -->
+                <?php
+                    if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
+                        echo '<li class="nav-item">';
+                        echo '<a class="nav-link" href="dashboard.php">Dashboard</a>';
+                        echo '</li>';
+                    }
+                ?>
                 </ul>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -63,16 +67,50 @@
                 </tr>
             </thead>
             <tbody>
+                <?php 
+                    // Connexion à la BD
+                    $servername = "lakartxela.iutbayonne.univ-pau.fr";
+                    $username = "mbourciez_pro";
+                    $password = "mbourciez_pro";
+                    $dbname = "mbourciez_pro";
+
+                    $conn = new mysqli($servername, $username, $password, $dbname);
+
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
+
+                    // Exécuter la requête
+                    $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
+                    FROM Article
+                    LEFT JOIN Image ON Article.imageId = Image.id
+                    LEFT JOIN Categorie ON Article.categorieId = Categorie.id; ";
+
+                    $result = $conn->query($sql);
+
+                    if (!$result) {
+                        die("Erreur lors de l'exécution de la requête : " . $conn->error);
+                    }
+
+                    if ($result->num_rows == 0) {
+                        echo "pas d'articles disponibles !";
+                    } 
+                ?>
+                <?php foreach($result as $article) { ?>
                 <tr>
-                    <th scope="row">Voiture</th>
-                    <td>Voiture ayant appartenu a Adolf Hitler</td>
-                    <td>1 000 000€</td>
-                    <td>1</td>
-                    <td>/images/voitureAdolf.jpg</td>
+                    <th scope="row"><?= $article['titre']?></th>
+                    <td><?= $article['description']?></td>
+                    <td><?= $article['prix']?></td>
+                    <td><?= $article['quantiteDispo']?></td>
+                    <td><?= $article['chemin']?></td>
                     <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
                     <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
                 </tr>
-                <tr>
+                <?php 
+                    }
+                    $conn->close();
+                ?>
+                <!-- <tr>
                     <th scope="row">Panzer</th>
                     <td>Tank largement utilise par les nazis</td>
                     <td>150 000€</td>
@@ -80,12 +118,12 @@
                     <td>/images/tankPanzer.jpg</td>
                     <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
                     <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
-                </tr>
+                </tr> -->
             </tbody>
             </table>
         </ul>
         </div>
     </div>
-
+    <script src="js/scriptDashboard.js"></script>
 </body>
 </html>
