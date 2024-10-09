@@ -1,3 +1,5 @@
+<? session_start(); ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,8 +38,6 @@
     </nav>
 
     <?php
-    session_start();
-
     if (!(isset($_SESSION['login']) && isset($_SESSION['pwd']))) {
         header('location: login.html');
     }

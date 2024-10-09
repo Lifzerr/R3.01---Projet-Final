@@ -1,3 +1,5 @@
+<? session_start(); ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +24,6 @@
                     <a class="nav-link" href="#">Panier</a>
                 </li>
                 <?php
-                    session_start();
                     if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
                         echo '<li class="nav-item">';
                         echo '<a class="nav-link" href="dashboard.php">Dashboard</a>';
