@@ -47,9 +47,13 @@
     }
     ?>
 
-    <div class="container">
+    <div class="container mt-5">
         <div id="main" class="card card-body">
-        <h2 class="title">Liste des articles</h2>
+            <div class="card-header d-flex justify-content-between">
+                <h2 class="title d-md-inline-flex">Liste des articles</h2>
+                <button type="button" class="btn btn-primary d-md-inline-flex mb-2">Ajouter un article</button>
+            </div>
+        
 
         <ul id="items" class="list-group">
             <li class="list-group-item">
