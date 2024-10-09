@@ -51,15 +51,35 @@
         <ul id="items" class="list-group">
             <li class="list-group-item">
             <table class="table">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Quantite</th>
+                    <th>Chemin</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
             <tbody>
                 <tr>
-                <th scope="row">Voiture</th>
-                <td>Voiture ayant appartenu a Adolf Hitler</td>
-                <td>100 000€</td>
-                <td>1</td>
-                <td>/imges/voitureAdolf.jpg</td>
-                <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
-                <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
+                    <th scope="row">Voiture</th>
+                    <td>Voiture ayant appartenu a Adolf Hitler</td>
+                    <td>1 000 000€</td>
+                    <td>1</td>
+                    <td>/images/voitureAdolf.jpg</td>
+                    <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
+                    <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
+                </tr>
+                <tr>
+                    <th scope="row">Panzer</th>
+                    <td>Tank largement utilise par les nazis</td>
+                    <td>150 000€</td>
+                    <td>1</td>
+                    <td>/images/tankPanzer.jpg</td>
+                    <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
+                    <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
                 </tr>
             </tbody>
             </table>
