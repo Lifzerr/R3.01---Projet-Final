@@ -71,13 +71,9 @@
             </thead>
             <tbody>
                 <?php 
-                    // Connexion à la BD
-                    $servername = "lakartxela.iutbayonne.univ-pau.fr";
-                    $username = "mbourciez_pro";
-                    $password = "mbourciez_pro";
-                    $dbname = "mbourciez_pro";
+                    require_once('fonctions.php');
 
-                    $conn = new mysqli($servername, $username, $password, $dbname);
+                    $conn = connectionBDLocalhost();
                     mysqli_set_charset($conn, "utf8mb4");
 
                     if ($conn->connect_error) {

@@ -1,14 +1,9 @@
 <?php
 // Démarrer la session si vous devez vérifier l'authentification
 session_start();
+require_once('fonctions.php');
 
-// Connexion à la base de données
-$servername = "lakartxela.iutbayonne.univ-pau.fr";
-$username = "mbourciez_pro";
-$password = "mbourciez_pro";
-$dbname = "mbourciez_pro";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = connexionBDLocalhost();
 mysqli_set_charset($conn, "utf8mb4");
 
 // Vérifier la connexion

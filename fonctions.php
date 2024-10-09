@@ -27,3 +27,25 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
     // Return the path of the resized image
     return $img_dest;
 }
+
+function connectionBDLakartxela() {
+    // Connexion à la BD
+    $servername = "lakartxela.iutbayonne.univ-pau.fr";
+    $username = "mbourciez_pro";
+    $password = "mbourciez_pro";
+    $dbname = "mbourciez_pro";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    return $conn;
+}
+
+function connectionBDLocalhost() {
+    // Connexion à la BD
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "mbourciez_pro";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    return $conn;
+}
