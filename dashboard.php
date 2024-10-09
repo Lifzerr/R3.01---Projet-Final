@@ -24,9 +24,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="panier.php">Panier</a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                </li> -->
+                <?php
+                    if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
+                        echo '<li class="nav-item">';
+                        echo '<a class="nav-link" href="dashboard.php">Dashboard</a>';
+                        echo '</li>';
+                    }
+                ?>
                 </ul>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -41,62 +45,75 @@
     if (!(isset($_SESSION['login']) && isset($_SESSION['pwd']))) {
         header('location: login.html');
     }
-
     ?>
 
     <div class="container">
-        <table class="table">
-        <thead>
-            <tr>
-            <th scope="col">#</th>
-            <th scope="col">Article</th>
-            <th scope="col">Qte Stock</th>
-            <th scope="col">Prix HT</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <th scope="row">Item 1</th>
-            <td>Pains au lait (paquet de 10)</td>
-            <td>10</td>
-            <td>0.95€</td>
-            </tr>
-            <tr>
-            <th scope="row">Item 2</th>
-            <td>Miel d'oranger (pot de 250 g)</td>
-            <td>29</td>
-            <td>4.50€</td>
-            </tr>
-            <tr>
-            <th scope="row">Item 3</th>
-            <td>Farine de froment (paquet de 1 kg)</td>
-            <td>12</td>
-            <td>0.65€</td>
-            </tr>
-        </tbody>
-        </table>
-    </div>
-
-    <div class="container">
         <div id="main" class="card card-body">
-        <h2 class="title">Ajouter un article à ma sélection ...</h2>
-        <form name="monFormulaire" id="addForm" class="form-inline mb-3">
-            <input type="text" class="form-control mr-2" id="item" name="ZoneSaisie" />
-            <input type="submit" class="btn btn-dark" value="Submit" />
-        </form>
-        <h4 class="title">Items déjà sélectionnés :</h4>
-        <ul id="items" class="list-group font-weight-bold">
+        <h2 class="title">Liste des articles</h2>
+
+        <ul id="items" class="list-group">
             <li class="list-group-item">
-            Item 1
-            <button class="btn btn-danger btn-sm float-right">X</button>
-            </li>
-            <li class="list-group-item">
-            Item 2
-            <button class="btn btn-danger btn-sm float-right">X</button>
-            </li>
+            <table class="table">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Quantite</th>
+                    <th>Chemin</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                    // Connexion à la BD
+                    $servername = "lakartxela.iutbayonne.univ-pau.fr";
+                    $username = "mbourciez_pro";
+                    $password = "mbourciez_pro";
+                    $dbname = "mbourciez_pro";
+
+                    $conn = new mysqli($servername, $username, $password, $dbname);
+
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
+
+                    // Exécuter la requête
+                    $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
+                    FROM Article
+                    LEFT JOIN Image ON Article.imageId = Image.id
+                    LEFT JOIN Categorie ON Article.categorieId = Categorie.id; ";
+
+                    $result = $conn->query($sql);
+
+                    if (!$result) {
+                        die("Erreur lors de l'exécution de la requête : " . $conn->error);
+                    }
+
+                    if ($result->num_rows == 0) {
+                        echo "pas d'articles disponibles !";
+                    } 
+                ?>
+                <?php foreach($result as $article) { ?>
+                <tr>
+                    <th scope="row"><?= $article['titre']?></th>
+                    <td><?= $article['description']?></td>
+                    <td><?= $article['prix']?></td>
+                    <td><?= $article['quantiteDispo']?></td>
+                    <td><?= $article['chemin']?></td>
+                    <td> <button class="btn btn-warning btn-sm float-right btnModifier">Modifier</button> </td>
+                    <td> <button class="btn btn-danger btn-sm float-right btnSupprimer">Supprimer</button> </td>
+                </tr>
+                <?php 
+                    }
+                    $conn->close();
+                ?>
+            </tbody>
+            </table>
         </ul>
         </div>
     </div>
-
+    <script src="js/scriptDashboard.js"></script>
 </body>
 </html>
