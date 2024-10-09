@@ -74,6 +74,7 @@
                     $dbname = "mbourciez_pro";
 
                     $conn = new mysqli($servername, $username, $password, $dbname);
+                    mysqli_set_charset($conn, "utf8mb4");
 
                     if ($conn->connect_error) {
                         die("Connection failed: " . $conn->connect_error);
@@ -102,8 +103,8 @@
                     <td><?= $article['prix']?></td>
                     <td><?= $article['quantiteDispo']?></td>
                     <td><?= $article['chemin']?></td>
-                    <td> <button class="btn btn-warning btn-sm float-right btnModifier">Modifier</button> </td>
-                    <td> <button class="btn btn-danger btn-sm float-right btnSupprimer">Supprimer</button> </td>
+                    <td> <button class="btn btn-warning btn-sm float-right btnModifier" data-id="<?= $article['id'] ?>">Modifier</button> </td>
+                    <td> <button class="btn btn-danger btn-sm float-right btnSupprimer" data-id="<?= $article['id'] ?>">Supprimer</button> </td>
                 </tr>
                 <?php 
                     }
