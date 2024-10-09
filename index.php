@@ -58,9 +58,9 @@
         <?php 
             // Connexion à la BD
             $servername = "lakartxela.iutbayonne.univ-pau.fr";
-            $username = "mbourciez_bd";
-            $password = "mbourciez_bd";
-            $dbname = "mbourciez_bd";
+            $username = "mbourciez_pro";
+            $password = "mbourciez_pro";
+            $dbname = "mbourciez_pro";
 
             $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -69,11 +69,11 @@
             }
 
             // Exécuter la requête
-            $sql = "SELECT * FROM article A
-                LEFT JOIN 
-                    comporter C ON A.id = C.articleId
-                LEFT JOIN 
-                    image I ON C.imageId = I.id;";
+            $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
+            FROM Article
+            LEFT JOIN Image ON Article.imageId = Image.id
+            LEFT JOIN Categorie ON Article.categorieId = Categorie.id;
+            ";
             $result = $conn->query($sql);
             if (!$result) {
                 die("Erreur lors de l'exécution de la requête : " . $conn->error);
@@ -108,6 +108,7 @@
 
         
     </div>
+
 
     <footer class="bg-dark text-white py-4">
     <div class="container">
