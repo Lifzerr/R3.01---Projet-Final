@@ -1,6 +1,8 @@
-let boutonModif = document.getElementById('btnModifier');
-let boutonSupp = document.getElementById('btnSupprimer');
+let boutonModif = document.querySelectorAll('btnModifier')
+let boutonSupp = document.querySelectorAll('btnSupprimer');
 
-boutonSupp.addEventListener('click', () => {
-    console.log('ff');
+boutonModif.forEach(elt => {
+    elt.addEventListener('click', () => {
+        console.log('ff');
+    });
 });

@@ -45,7 +45,6 @@
     if (!(isset($_SESSION['login']) && isset($_SESSION['pwd']))) {
         header('location: login.html');
     }
-
     ?>
 
     <div class="container">
@@ -103,22 +102,13 @@
                     <td><?= $article['prix']?></td>
                     <td><?= $article['quantiteDispo']?></td>
                     <td><?= $article['chemin']?></td>
-                    <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
-                    <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
+                    <td> <button class="btn btn-warning btn-sm float-right btnModifier">Modifier</button> </td>
+                    <td> <button class="btn btn-danger btn-sm float-right btnSupprimer">Supprimer</button> </td>
                 </tr>
                 <?php 
                     }
                     $conn->close();
                 ?>
-                <!-- <tr>
-                    <th scope="row">Panzer</th>
-                    <td>Tank largement utilise par les nazis</td>
-                    <td>150 000€</td>
-                    <td>1</td>
-                    <td>/images/tankPanzer.jpg</td>
-                    <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
-                    <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
-                </tr> -->
             </tbody>
             </table>
         </ul>
