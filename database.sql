@@ -48,10 +48,10 @@ CREATE TABLE IF NOT EXISTS `article` (
 INSERT INTO `article` (`id`, `titre`, `description`, `prix`, `imageId`, `categorieId`, `quantiteDispo`) VALUES
 (1, 'Casque M1', 'Casque utilisé par les forces américaines durant la Seconde Guerre mondiale.', 120.00, 1, 1, 10),
 (2, 'Enigma', 'Machine de cryptage utilisée par les Allemands pour sécuriser leurs communications.', 500000.00, 2, 4, 5),
-(3, 'Panzer IV', 'Char de combat allemand, modèle très utilisé sur le front de l’Est.', 300000.00, 3, 3, 2),
+(3, 'Panzer IV', 'Char de combat allemand, modèle très utilisé sur le front de l Est.', 300000.00, 3, 3, 2),
 (4, 'Grenade Manche', 'Grenade à main utilisée par les soldats durant la guerre.', 25.00, 4, 10, 15),
 (5, 'Grenade Mk 2', 'Grenade à main standardisée des forces américaines.', 30.00, 5, 10, 20),
-(6, 'Luger', 'Pistolet semi-automatique utilisé par l\'armée allemande.', 500.00, 6, 2, 8),
+(6, 'Luger', 'Pistolet semi-automatique utilisé par l armée allemande.', 500.00, 6, 2, 8),
 (7, 'Masque à Gaz', 'Masque utilisé pour protéger contre les gaz toxiques.', 80.00, 7, 4, 12),
 (8, 'MG42', 'Mitrailleuse allemande utilisée pendant la Seconde Guerre mondiale.', 2000.00, 8, 2, 4),
 (10, 'Tank Panzer', 'Tank de la Wehrmacht, célèbre pour sa robustesse.', 250000.00, 10, 3, 1);
