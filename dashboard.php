@@ -45,55 +45,24 @@
     ?>
 
     <div class="container">
-        <table class="table">
-        <thead>
-            <tr>
-            <th scope="col">#</th>
-            <th scope="col">Article</th>
-            <th scope="col">Qte Stock</th>
-            <th scope="col">Prix HT</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <th scope="row">Item 1</th>
-            <td>Pains au lait (paquet de 10)</td>
-            <td>10</td>
-            <td>0.95€</td>
-            </tr>
-            <tr>
-            <th scope="row">Item 2</th>
-            <td>Miel d'oranger (pot de 250 g)</td>
-            <td>29</td>
-            <td>4.50€</td>
-            </tr>
-            <tr>
-            <th scope="row">Item 3</th>
-            <td>Farine de froment (paquet de 1 kg)</td>
-            <td>12</td>
-            <td>0.65€</td>
-            </tr>
-        </tbody>
-        </table>
-    </div>
-
-    <div class="container">
         <div id="main" class="card card-body">
-        <h2 class="title">Ajouter un article à ma sélection ...</h2>
-        <form name="monFormulaire" id="addForm" class="form-inline mb-3">
-            <input type="text" class="form-control mr-2" id="item" name="ZoneSaisie" />
-            <input type="submit" class="btn btn-dark" value="Submit" />
-        </form>
-        <h4 class="title">Items déjà sélectionnés :</h4>
-        <ul id="items" class="list-group font-weight-bold">
+        <h2 class="title">Liste des articles</h2>
+
+        <ul id="items" class="list-group">
             <li class="list-group-item">
-            Item 1
-            <button class="btn btn-danger btn-sm float-right">X</button>
-            </li>
-            <li class="list-group-item">
-            Item 2
-            <button class="btn btn-danger btn-sm float-right">X</button>
-            </li>
+            <table class="table">
+            <tbody>
+                <tr>
+                <th scope="row">Voiture</th>
+                <td>Voiture ayant appartenu a Adolf Hitler</td>
+                <td>100 000€</td>
+                <td>1</td>
+                <td>/imges/voitureAdolf.jpg</td>
+                <td> <button id="btnModifier" class="btn btn-warning btn-sm float-right">Modifier</button> </td>
+                <td> <button id="btnSupprimer" class="btn btn-danger btn-sm float-right">Supprimer</button> </td>
+                </tr>
+            </tbody>
+            </table>
         </ul>
         </div>
     </div>
