@@ -34,7 +34,7 @@ btnSupprimer.forEach(button => {
                 }
             })
             .catch(error => {
-                console.error('Erreur:', error);
+                console.error('Erreur:', error.toString());
                 alert('Une erreur est survenue. Veuillez réessayer.');
             });
         }

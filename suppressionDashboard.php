@@ -3,6 +3,7 @@
 session_start();
 require_once('fonctions.php');
 
+// Se connecter à la BD
 $conn = connectionBDLocalhost();
 mysqli_set_charset($conn, "utf8mb4");
 
@@ -11,11 +12,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Récupérer les données JSON envoyées par le client
+// Récupérer les données JSON envoyées par le client - id de l'article à suppr
 $data = json_decode(file_get_contents('php://input'), true);
 $articleId = $data['id'];
 
-// Vérifier que l'ID de l'article est fourni
 if (isset($articleId)) {
     // Récupérer le chemin de l'image pour suppression physique
     $sqlTakeImage = "SELECT I.chemin FROM Image I
@@ -35,27 +35,23 @@ if (isset($articleId)) {
             unlink($cheminImage);
         }
     }
-    /*
-    // Suppression de l'image
-    $sql = "DELETE FROM Image
-    JOIN Article A ON A.imageId = I.id
-    WHERE A.id = ?";
+
+    // Préparer et exécuter la requête de suppression de l'image en BD
+    $sql = "DELETE I FROM Image I
+            JOIN Article A ON A.imageId = I.id
+            WHERE A.id = ?;";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $articleId);
     $resultSuppImage = $stmt->execute();
-    */
-    // Suppression de l'article
-    $sql = "DELETE FROM Article WHERE id = ?;";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $articleId);
-    $resultSuppArticle = $stmt->execute();
 
-    
-
+    // Préparer et exécuter la requête de suppression de l'article en BD
+    $sql = "DELETE FROM Article WHERE id = ?";
+    $stmt1 = $conn->prepare($sql);
+    $stmt1->bind_param("i", $articleId);
+    $resultDelArticle = $stmt1->execute();
     // Préparer la réponse
     $response = [];
-
-    if ($resultSuppArticle && $resultSuppImage) {
+    if ($resultDelArticle  && $resultSuppImage) {
         $response['success'] = true;
         $response['message'] = 'Article supprimé avec succès.';
     } else {
@@ -69,10 +65,8 @@ if (isset($articleId)) {
     $response['success'] = false;
     $response['message'] = 'ID d\'article non fourni.';
 }
-
 // Retourner la réponse au format JSON
 header('Content-Type: application/json');
 echo json_encode($response);
-
 // Fermer la connexion
 $conn->close();
