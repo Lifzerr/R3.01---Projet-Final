@@ -134,17 +134,20 @@
 
                 // Ajout de l'article dans la BD
                 $sql = "INSERT INTO Article (titre, description, prix, quantiteDispo, categorieId, imageId) 
-                VALUES ('$titre', '$description', '$prix', '$quantiteDispo', '$categorie', '$idImage')";
+                        VALUES (?, ?, ?, ?, ?, ?)";
 
-                // Redirection si tout est terminé
-                if ($conn->query($sql) === TRUE) {
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssdiii", $titre, $description, $prix, $quantiteDispo, $categorie, $idImage);
+
+                $result = $stmt->execute();
+
+                if ($result) {
                     echo "Nouvel article ajouté avec succès !";
                     header("Location: dashboard.php"); // Redirection vers le dashboard
-                    exit(); // Assurez-vous de sortir du script après la redirection
+                    exit();
                 } else {
-                    echo "Erreur : " . $sql . "<br>" . $conn->error;
+                    echo "Erreur : " . $conn->error;
                 }
-
             } 
 
     ?>

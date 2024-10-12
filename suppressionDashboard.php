@@ -27,12 +27,17 @@ if (isset($articleId)) {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
+        // Suppression de l'image complète
         $row = $result->fetch_assoc();
         $cheminImage = $row['chemin'];
-
-        // Supprimer l'image du dossier
         if (file_exists($cheminImage)) {
             unlink($cheminImage);
+        }
+
+        // Suppression de la vignette
+        $cheminVignette = str_replace('images/', 'vignettes/', $cheminImage);
+        if(file_exists($cheminVignette)){
+            unlink($cheminVignette);
         }
     }
 
