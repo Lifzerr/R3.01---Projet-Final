@@ -49,10 +49,10 @@
 
     <div class="container mt-5">
         <div id="main" class="card card-body">
-            <div class="card-header d-flex justify-content-between">
-                <h2 class="title d-md-inline-flex">Liste des articles</h2>
-                <button type="button" class="btn btn-primary d-md-inline-flex mb-2">Ajouter un article</button>
-            </div>
+        <div class="card-header d-flex justify-content-between">
+            <h2 class="title d-md-inline-flex">Liste des articles</h2>
+            <button type="button" class="btn btn-primary d-md-inline-flex mb-2" onclick="window.location.href='ajout-materiel.php'">Ajouter un article</button>
+        </div>
         
 
         <ul id="items" class="list-group">
