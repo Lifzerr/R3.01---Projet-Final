@@ -20,7 +20,7 @@
 <body>
     <div class="container mt-5">
         <h2>Ajouter un Matériel</h2>
-        <form action="ajouter_materiel.php" method="POST" enctype="multipart/form-data">
+        <form action="ajout-materiel.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="titre">Titre</label>
                 <input type="text" class="form-control" id="titre" name="titre" placeholder="Titre du matériel" required>
@@ -62,8 +62,8 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="chemin">Chemin de l'image</label>
-                <input type="text" class="form-control" id="chemin" name="chemin" placeholder="Chemin de l'image" required>
+                <label for="chemin">Texte alternatif à l'image</label>
+                <input type="text" class="form-control" id="alt" name="alt" placeholder="Alt de l'image" required>
             </div>
             <div class="form-group">
                 <label for="image">Uploader une image</label>
@@ -80,7 +80,7 @@
                 isset($_POST['prix']) &&
                 isset($_POST['quantiteDispo']) &&
                 isset($_POST['categorie']) &&
-                isset($_POST['chemin']) &&
+                isset($_POST['alt']) &&
                 isset($_FILES['image'])
             ) {
                 
@@ -89,24 +89,62 @@
                 $prix = $_POST['prix'];
                 $quantiteDispo = $_POST['quantiteDispo'];
                 $categorie = $_POST['categorie'];
-                $chemin = $_POST['chemin'];
+                $alt = $_POST['alt'];
                 $image = $_FILES['image'];
+
+                // Récupération de l'id pour insérer l'image
+                $sqlIdImage = "SELECT MAX(id) FROM Image";
+                $resultat = $conn->query($sqlIdImage);
+                if ($resultat) {
+                    $row = $resultat->fetch_assoc();
+                    $idImage = $row['MAX(id)'] + 1;
+                } else {
+                    die("Erreur lors de la récupération de l'id de l'image : " . $conn->error);
+                }
+
+                $target_dir = "images/";
+                $target_file = $target_dir . basename($_FILES["image"]["name"]);
+
+                // Vérifier si le fichier est une image réelle
+                $check = getimagesize($_FILES["image"]["tmp_name"]);
+                if ($check !== false) {
+                    if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                        echo "L'image " . htmlspecialchars(basename($_FILES["image"]["name"])) . " a été uploadée.";
+                    } else {
+                        die("Erreur lors de l'upload de l'image.");
+                    }
+                } else {
+                    die("Le fichier n'est pas une image.");
+                }
+
+
+                // Insertion de l'image dans la BD
+                $chemin = "images/";
+                $nomImage = $image['name'];
+                $cheminImage = $chemin . $nomImage;
+
+                $sqlImage = "INSERT INTO Image (id, chemin, alt) VALUES ('$idImage', '$cheminImage', '$alt')";
+
+                if ($conn->query($sqlImage) === TRUE) {
+                    echo "Image ajoutée avec succès !";
+                } else {
+                    die("Erreur lors de l'ajout de l'image : " . $conn->error);
+                }
 
                 // Ajout de l'article dans la BD
                 $sql = "INSERT INTO Article (titre, description, prix, quantiteDispo, categorieId, imageId) 
-                VALUES ('$titre', '$description', '$prix', '$quantiteDispo', '$categorie', <ID_DE_L_IMAGE>)";
+                VALUES ('$titre', '$description', '$prix', '$quantiteDispo', '$categorie', '$idImage')";
 
+                // Redirection si tout est terminé
                 if ($conn->query($sql) === TRUE) {
                     echo "Nouvel article ajouté avec succès !";
+                    header("Location: dashboard.php"); // Redirection vers le dashboard
+                    exit(); // Assurez-vous de sortir du script après la redirection
                 } else {
                     echo "Erreur : " . $sql . "<br>" . $conn->error;
                 }
-            } else {
-                echo "Veuillez remplir tous les champs du formulaire.";
-            }
-            
 
-
+            } 
 
     ?>
 
