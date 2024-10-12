@@ -25,6 +25,7 @@
                     <a class="nav-link" href="panier.php">Panier</a>
                 </li>
                 <?php
+                    // Afficher le dashboard que si on est admin
                     if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
                         echo '<li class="nav-item">';
                         echo '<a class="nav-link selected" href="dashboard.php">Dashboard</a>';
@@ -42,6 +43,7 @@
     </nav>
 
     <?php
+    // Rediriger si on est pas identifie
     if (!(isset($_SESSION['login']) && isset($_SESSION['pwd']))) {
         header('location: login.html');
     }
@@ -60,6 +62,7 @@
             <table class="table">
             <thead>
                 <tr>
+                    <th class="d-none">Id</th>
                     <th>Titre</th>
                     <th>Description</th>
                     <th>Prix</th>
@@ -73,6 +76,7 @@
                 <?php 
                     require_once('fonctions.php');
 
+                    // Connection Bd
                     $conn = connectionBDLocalhost();
                     mysqli_set_charset($conn, "utf8mb4");
 
@@ -82,22 +86,23 @@
 
                     // Exécuter la requête
                     $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
-                    FROM Article
-                    LEFT JOIN Image ON Article.imageId = Image.id
-                    LEFT JOIN Categorie ON Article.categorieId = Categorie.id; ";
-
+                            FROM Article
+                            LEFT JOIN Image ON Article.imageId = Image.id
+                            LEFT JOIN Categorie ON Article.categorieId = Categorie.id; ";
                     $result = $conn->query($sql);
 
                     if (!$result) {
                         die("Erreur lors de l'exécution de la requête : " . $conn->error);
                     }
-
                     if ($result->num_rows == 0) {
                         echo "pas d'articles disponibles !";
                     } 
                 ?>
-                <?php foreach($result as $article) { ?>
+                <?php 
+                    // Display les articles
+                    foreach($result as $article) { ?>
                 <tr>
+                    <th scope="row" class="d-none"><?= $article['id']?></th>
                     <th scope="row"><?= $article['titre']?></th>
                     <td><?= $article['description']?></td>
                     <td><?= $article['prix']?></td>
