@@ -3,7 +3,7 @@
 session_start();
 require_once('fonctions.php');
 
-$conn = connexionBDLocalhost();
+$conn = connectionBDLocalhost();
 mysqli_set_charset($conn, "utf8mb4");
 
 // Vérifier la connexion
@@ -47,4 +47,4 @@ echo json_encode($response);
 
 // Fermer la connexion
 $conn->close();
-?>
+
