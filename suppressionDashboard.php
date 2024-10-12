@@ -17,16 +17,45 @@ $articleId = $data['id'];
 
 // Vérifier que l'ID de l'article est fourni
 if (isset($articleId)) {
-    // Préparer et exécuter la requête de suppression
-    $sql = "DELETE FROM Article WHERE id = ?";
+    // Récupérer le chemin de l'image pour suppression physique
+    $sqlTakeImage = "SELECT I.chemin FROM Image I
+                    JOIN Article A ON A.imageId = I.id
+                    WHERE A.id = ?";
+    $stmt = $conn->prepare($sqlTakeImage);
+    $stmt->bind_param("i", $articleId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $cheminImage = $row['chemin'];
+
+        // Supprimer l'image du dossier
+        if (file_exists($cheminImage)) {
+            unlink($cheminImage);
+        }
+    }
+    /*
+    // Suppression de l'image
+    $sql = "DELETE FROM Image
+    JOIN Article A ON A.imageId = I.id
+    WHERE A.id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $articleId);
-    $result = $stmt->execute();
+    $resultSuppImage = $stmt->execute();
+    */
+    // Suppression de l'article
+    $sql = "DELETE FROM Article WHERE id = ?;";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $articleId);
+    $resultSuppArticle = $stmt->execute();
+
+    
 
     // Préparer la réponse
     $response = [];
 
-    if ($result) {
+    if ($resultSuppArticle && $resultSuppImage) {
         $response['success'] = true;
         $response['message'] = 'Article supprimé avec succès.';
     } else {
@@ -47,4 +76,3 @@ echo json_encode($response);
 
 // Fermer la connexion
 $conn->close();
-

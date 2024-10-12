@@ -1,4 +1,3 @@
-
 // Sélectionner tous les boutons "Supprimer"
 const btnSupprimer = document.querySelectorAll('.btnSupprimer');
 
@@ -41,8 +40,3 @@ btnSupprimer.forEach(button => {
         }
     });
 });
-
-
-
-
-
