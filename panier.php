@@ -27,7 +27,7 @@
             <table class="table">
             <thead>
                 <tr>
-                    <th class="d-done">Titre</th>
+                    <th class="d-done">Article</th>
                     <th>Description</th>
                     <th>Prix</th>
                     <th>Quantite</th>
