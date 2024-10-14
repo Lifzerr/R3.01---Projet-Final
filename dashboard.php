@@ -22,7 +22,7 @@ require_once('fonctions.php');
     }
     ?>
 
-    <div class="container mt-5">
+    <div class="container mt-5 pb-5">
         <div id="main" class="card card-body">
         <div class="card-header d-flex justify-content-between">
             <h2 class="title d-md-inline-flex">Dashboard</h2>
