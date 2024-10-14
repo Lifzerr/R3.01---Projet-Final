@@ -47,19 +47,19 @@
 
     <?php
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
-            // Get the date from the form input
+            // Recup la date entrée dans le formulaire
             $validityDate = $_POST['validity'];
 
-            // Convert the input date to a DateTime object
+            // Converti la date avec l'objet datetime
             $validityDate = new DateTime($validityDate);
 
-            // Get today's date
+            // Get la date d'ajd
             $today = new DateTime();
 
-            // Add 3 months to today's date
+            // Ajouter 3 mois à la date d'aujourd'hui
             $todayPlus3Months = (clone $today)->modify('+3 months');
 
-            // Check if the validity date is greater than today plus 3 months
+            // Verifier que la date est superieure a 3 mois
             if ($validityDate > $todayPlus3Months) {
                 echo "La date est supérieure à 3 mois.";
             } else {
