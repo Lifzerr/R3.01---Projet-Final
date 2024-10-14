@@ -48,7 +48,6 @@
                     <?php
                         $sql = "SELECT * FROM Categorie;";
                         $result = $conn->query($sql);
-
                         if (!$result) {
                             die("Erreur lors de l'exécution de la requête : " . $conn->error);
                         } else if ($result->num_rows == 0) {

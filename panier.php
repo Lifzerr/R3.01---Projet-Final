@@ -19,8 +19,15 @@
         <div class="card-header d-flex justify-content-between">
             <h2 class="title d-md-inline-flex">Votre Panier</h2>
             <button type="button" class="btn btn-primary d-md-inline-flex mb-2" onclick="window.location.href='paiement.php'">Payer</button>
+            <form method="post" action="panier.php">
+                <button type="submit" name="btnResetSession" class="btn btn-primary">Reset panier</button>
+            </form>
         </div>
         
+        <?php 
+        if (@$_SESSION['panier'] == []) {
+            echo "Votre panier est vide !";
+        } else { ?>
 
         <ul id="items" class="list-group">
             <li class="list-group-item">
@@ -36,49 +43,37 @@
                 </tr>
             </thead>
             <tbody>
-    <?php 
-    var_dump($_SESSION['panier']);          //A true quand reload de la page car pas de changement de var
-    foreach ($_SESSION['panier'] as $key => $articleInfo) {
-        // $articleInfo now contains [article_id, boolean]
-        $articleId = $articleInfo[0]; // The first value is the article ID
-        $isDisplayed = $articleInfo[1]; // The second value is whether it's already displayed
+    
+        <?php
+        foreach ($_SESSION['panier'] as $key => $articleInfo) {
+            // $articleInfo now contains [article_id, boolean]
+            $articleId = $articleInfo[0]; // The first value is the article ID
+            $quantite = $articleInfo[1]; // The second value is whether it's already displayed
 
-        // Connection to the database
-        $conn = connectionBDLocalhost();
-        mysqli_set_charset($conn, "utf8mb4");
+            // Connection to the database
+            $conn = connectionBDLocalhost();
+            mysqli_set_charset($conn, "utf8mb4");
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
 
-        // SQL query to fetch article details
-        $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
-                FROM Article
-                LEFT JOIN Image ON Article.imageId = Image.id
-                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
-                WHERE Article.id = ?;";
-        
-        $requete = $conn->prepare($sql);
-        $requete->bind_param("i", $articleId);
-        $requete->execute();
-        $result = $requete->get_result();
+            // SQL query to fetch article details
+            $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
+                    FROM Article
+                    LEFT JOIN Image ON Article.imageId = Image.id
+                    LEFT JOIN Categorie ON Article.categorieId = Categorie.id
+                    WHERE Article.id = ?;";
+            
+            $requete = $conn->prepare($sql);
+            $requete->bind_param("i", $articleId);
+            $requete->execute();
+            $result = $requete->get_result();
+            
+            // Fetch article details and display it
+            $compteur = $_SESSION['panier'][1]; // Counts occurrences of article IDs
 
-        if (!$result) {
-            die("Erreur lors de l'exécution de la requête : " . $conn->error);
-        }
-        if ($result->num_rows == 0) {
-            echo "pas d'articles disponibles !";
-        } 
-        
-        // Fetch article details and display it
-        $compteur = array_count_values(array_column($_SESSION['panier'], 0)); // Counts occurrences of article IDs
-
-        foreach ($result as $article) { 
-            if ($_SESSION['panier'][$key][1] == false) {
-                // Set the article as displayed (replace false with true in the session)
-                $_SESSION['panier'][$key][1] = true; 
-
-                ?>
+            foreach ($result as $article) { ?>
                 <tr>
                     <th scope="row" class="d-none"><?= $article['id'] ?></th>
                     <th scope="row"><?= $article['titre'] ?></th>
@@ -86,23 +81,29 @@
                     <td>
                         <?php
                             // Display total price (price * quantity)
-                            echo $article['prix'] * $compteur[$article['id']];
+                            echo $article['prix'] * $quantite;
                         ?>
                     </td>
                     <td>
                         <?php
                             // Display the quantity
-                            echo $compteur[$article['id']];
+                            echo $quantite;
                         ?>
                     </td>
                 </tr>
-                <?php 
+            <?php 
             }
+            }
+
+        if (isset($_POST['btnResetSession'])) {
+            unset($_SESSION['panier']);
         }
-    } 
+    
+
     ?>                
     <?php 
     $conn->close();
+    }
     ?>
 </tbody>
 </table>
