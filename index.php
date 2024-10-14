@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>War.net | Vente de matériel militaire</title>
     <link rel="stylesheet" href="node_modules\bootstrap\dist\css\bootstrap.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <?php genererNav(); ?>
@@ -31,7 +32,7 @@
             }
 
             // Exécuter la requête
-            $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
+            $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
             FROM Article
             LEFT JOIN Image ON Article.imageId = Image.id
             LEFT JOIN Categorie ON Article.categorieId = Categorie.id;
@@ -54,24 +55,49 @@
                     <div class="card-body">
                         <h5 class="card-title"><?= $article['titre'] ?></h5>
                         <p class="card-text"><?= $article['description'] ?></p>
-                        <form method="post" action="index.php">
-                            <input type="hidden" name="article_id" value="<?= $article['id'] ?>">
-                            <button type="submit" class="btn btn-primary">Ajouter au panier</button>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">Detail</button>
+                        <form method="post" action="index.php" class="d-md-inline-flex">
+                            <!-- <input type="hidden"> -->
+                            <button type="submit" class="btn btn-primary"  name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
                         </form>
-                        <a href="#" class="btn btn-secondary">Detail</a>
-                    </div>
+                        </div>
                     <div class="card-footer">
                         Prix : <?= $article['prix'] ?>€
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="fenetreModale-<?= $article['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel"><?= $article['titre'] ?></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <?php
+                        echo $article['description'] . '<br>';
+                        echo $article['prix'] . '<br>';
+                        echo $article['quantiteDispo'] . '<br>';
+                        ?>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" action="index.php">
+                            <input type="hidden" name="article_id" value="<?= $article['id'] ?>">
+                            <button type="submit" class="btn btn-secondary">Ajouter au panier</button>
+                        </form>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
             <?php 
             }
             $conn->close(); 
         ?>
-        </div>
 
-        
+        </div>        
     </div>
 
     <?php
@@ -107,6 +133,14 @@
 
     <?php genererFooter(); ?>
     <script src="js/script.js"></script>
+    <!-- Bootstrap 4.6.2 JS and dependencies (jQuery and Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <!-- Bootstrap JS (with Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
 
