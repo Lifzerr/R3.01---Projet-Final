@@ -47,7 +47,7 @@
                         }
 
                         // Exécuter la requête
-                        $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
+                        $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
                                 FROM Article
                                 LEFT JOIN Image ON Article.imageId = Image.id
                                 LEFT JOIN Categorie ON Article.categorieId = Categorie.id
@@ -66,17 +66,36 @@
                         } 
                     
                     // Display les articles
-                    foreach($result as $article) { ?>
-                    <tr>
-                        <th scope="row" class="d-none"><?= $article['id']?></th>
-                        <th scope="row" ><?= $article['titre']?></th>
-                        <td><?= $article['description']?></td>
-                        <td><?= $article['prix']?></td>
-                        <td><?= $article['quantiteDispo']?></td>
-                    </tr>
-                    <?php 
-                    }
-                }
+                    foreach($result as $key => $article) { 
+                        $compteur = array_count_values($_SESSION['panier']);
+                        $premiereOccurence = array_search($article['id'], $_SESSION['panier']); // Use the article ID as the value to search for
+                        if ($compteur[$article['id']] > 1) {
+                            // Display the article only once
+                            echo $compteur[$article['id']];
+                            //$compteur[$article['id']] = array_count_values($_SESSION['panier']);
+                            //unset($_SESSION['panier'][$premiereOccurence]);
+                        }
+                        ?>
+                        <tr>
+                            <th scope="row" class="d-none"><?= $article['id']?></th>
+                            <th scope="row"><?= $article['titre']?></th>
+                            <td><?= $article['description']?></td>
+                            <td><?= $article['prix']?></td>
+                            <td>
+                            <?php
+                                // Display the count of the article in the cart
+                                if (isset($compteur[$article['id']]) && $compteur[$article['id']] > 1) {
+                                    // Display the quantity if greater than 1
+                                    echo $compteur[$article['id']];
+                                } else {
+                                    // Display '1' if the quantity is exactly 1
+                                    echo "1";
+                                }
+                            ?>
+                            </td>
+                        </tr>
+                        <?php 
+                    }}
                 ?>
                 
                 
