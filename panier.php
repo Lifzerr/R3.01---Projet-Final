@@ -80,7 +80,11 @@
                             <th scope="row" class="d-none"><?= $article['id']?></th>
                             <th scope="row"><?= $article['titre']?></th>
                             <td><?= $article['description']?></td>
-                            <td><?= $article['prix']?></td>
+                            <td>
+                                <?php
+                                    echo $article['prix'] * $compteur[$article['id']];
+                                ?>
+                            </td>
                             <td>
                             <?php
                                 // Display the count of the article in the cart
