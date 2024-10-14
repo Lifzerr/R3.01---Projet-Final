@@ -17,14 +17,14 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
 
     ImageCopyResampled($dst_im, $src_im, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
 
-    // Sauve la nouvelle image
+    // Sauvegarde la nouvelle image
     ImageJpeg($dst_im, "$img_dest");
 
     // Détruis les tampons
     ImageDestroy($dst_im);
     ImageDestroy($src_im);
 
-    // Return the path of the resized image
+    // Return le chemin de l'image recadree
     return $img_dest;
 }
 
