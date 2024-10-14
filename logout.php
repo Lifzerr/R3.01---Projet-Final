@@ -8,7 +8,8 @@
     unset($_SESSION['pwd']);
 
     // On détruit notre session
-    //session_destroy (); //Pour eviter de supprimer le panier lors de la deconnexion
+    session_destroy (); //Pour eviter de supprimer le panier lors de la deconnexion
+    $_SESSION['panier'] = array();
 
     // On redirige le visiteur vers la page d'accueil
     header ('location: index.php');

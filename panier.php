@@ -18,14 +18,18 @@
         <div id="main" class="card card-body">
         <div class="card-header d-flex justify-content-between">
             <h2 class="title d-md-inline-flex">Votre Panier</h2>
-            <button type="button" class="btn btn-primary d-md-inline-flex mb-2" onclick="window.location.href='paiement.php'">Payer</button>
-            <form method="post" action="panier.php">
-                <button type="submit" name="btnResetSession" class="btn btn-primary">Reset panier</button>
-            </form>
+            <?php 
+                if (sizeof($_SESSION['panier']) == 1) {
+                    echo "<button type='button' disabled class='btn btn-primary d-md-inline-flex mb-2' onclick=\"window.location.href='paiement.php'\">Payer</button>";
+                } else {
+                    echo "<button type='button' class='btn btn-primary d-md-inline-flex mb-2' onclick=\"window.location.href='paiement.php'\">Payer</button>";
+                }
+            ?>
+
         </div>
         
         <?php 
-        if (@$_SESSION['panier'] == []) {
+        if (sizeof($_SESSION['panier']) == 1) {
             echo "Votre panier est vide !";
         } else { ?>
 
@@ -94,12 +98,6 @@
             <?php 
             }
             }
-
-        if (isset($_POST['btnResetSession'])) {
-            unset($_SESSION['panier']);
-        }
-    
-
     ?>                
     <?php 
     $conn->close();
