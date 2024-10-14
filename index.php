@@ -23,7 +23,7 @@
         <?php 
             require_once('fonctions.php');
 
-            $conn = connectionBDLocalhost();
+            $conn = connectionBD();
             mysqli_set_charset($conn, "utf8mb4");
 
             if ($conn->connect_error) {

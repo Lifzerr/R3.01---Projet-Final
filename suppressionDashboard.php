@@ -4,7 +4,7 @@ session_start();
 require_once('fonctions.php');
 
 // Se connecter à la BD
-$conn = connectionBDLocalhost();
+$conn = connectionBD();
 mysqli_set_charset($conn, "utf8mb4");
 
 // Vérifier la connexion

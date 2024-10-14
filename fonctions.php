@@ -28,27 +28,45 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
     return $img_dest;
 }
 
-function connectionBDLakartxela() {
-    // Connexion à la BD
-    $servername = "lakartxela.iutbayonne.univ-pau.fr";
-    $username = "mbourciez_pro";
-    $password = "mbourciez_pro";
-    $dbname = "mbourciez_pro";
+// Fonction de connexion aux différentes bd possibles
+function connectionBD() {
+    // Paramètres de connexion pour le serveur distant
+    $servernameRemote = "lakartxela.iutbayonne.univ-pau.fr";
+    $usernameRemote = "mbourciez_pro";
+    $passwordRemote = "mbourciez_pro";
+    $dbnameRemote = "mbourciez_pro";
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Essayer de se connecter au serveur distant
+    $conn = new mysqli($servernameRemote, $usernameRemote, $passwordRemote, $dbnameRemote);
+
+    if ($conn->connect_error) {
+        // Paramètres de connexion pour le serveur local
+        $servernameLocal = "localhost";
+        $usernameLocal = "root";
+        $passwordLocal = "";
+        $dbnameLocal = "mbourciez_pro";
+
+        // Si la connexion au serveur distant échoue, tenter la connexion locale
+        $conn = new mysqli($servernameLocal, $usernameLocal, $passwordLocal, $dbnameLocal);
+
+        if ($conn->connect_error) {
+            // Connexionn au serve local sous linux
+            $passwordLocal = "root";
+
+            // Si la connexion au serveur distant échoue, tenter la connexion locale
+            $conn = new mysqli($servernameLocal, $usernameLocal, $passwordLocal, $dbnameLocal);
+
+            if ($conn->connect_error) {
+                // Si la connexion locale échoue aussi, retourner une erreur
+                die("Échec de la connexion : " . $conn->connect_error);
+            }
+        }
+    }
+
+    // Retourner la connexion si elle est réussie
     return $conn;
 }
 
-function connectionBDLocalhost() {
-    // Connexion à la BD
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "mbourciez_pro";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    return $conn;
-}
 
 function genererNav() {
     echo '
