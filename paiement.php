@@ -66,4 +66,6 @@
             }
         }
     ?>
+
+    <?php genererFooter(); ?>
 </body>

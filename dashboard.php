@@ -93,6 +93,7 @@ require_once('fonctions.php');
         </ul>
         </div>
     </div>
+    <?php genererFooter(); ?>
     <script src="js/scriptDashboard.js"></script>
 </body>
 </html>

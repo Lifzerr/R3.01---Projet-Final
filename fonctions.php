@@ -94,3 +94,36 @@ function genererNav() {
         </div>
     </nav>';
 }
+
+function genererFooter() {
+    echo '<footer class="bg-dark text-white py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>war.net</h5>
+                <p>Le site de vente en ligne de matériel historique de la Seconde Guerre mondiale.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Liens Utiles</h5>
+                <ul class="list-unstyled">
+                    <li><a href="index.php" class="text-white">Accueil</a></li>
+                    <li><a href="panier.php" class="text-white">Panier</a></li>
+                    <li><a href="login.html" class="text-white">Se connecter</a></li>
+                    <li><a href="contact.php" class="text-white">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Suivez-nous</h5>
+                <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i> Facebook</a><br>
+                <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i> Twitter</a><br>
+                <a href="#" class="text-white"><i class="fab fa-instagram"></i> Instagram</a>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col text-center">
+                <p>&copy; 2024 war.net. Tous droits réservés.</p>
+            </div>
+        </div>
+    </div>
+    </footer>';
+}
