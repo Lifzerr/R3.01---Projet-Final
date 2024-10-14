@@ -1,8 +1,9 @@
 <?php 
+    ob_start(); 
     require_once('fonctions.php');
     session_start();
 
-    $conn = connectionBDLocalhost();
+    $conn = connectionBD();
     mysqli_set_charset($conn, "utf8mb4");
 
     if ($conn->connect_error) {
@@ -21,7 +22,7 @@
 </head>
 <body>
     <?php genererNav(); ?>
-    <div class="container mt-5">
+    <div class="container mt-5 pb-5">
         <h2>Ajouter un Matériel</h2>
         <form action="ajout-materiel.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
@@ -51,7 +52,7 @@
                         if (!$result) {
                             die("Erreur lors de l'exécution de la requête : " . $conn->error);
                         } else if ($result->num_rows == 0) {
-                            echo "<option>pas de catégories disponibles !</option>";
+                            // echo "<option>pas de catégories disponibles !</option>";
                         } else {
                             // Afficher les options
                             foreach($result as $categorie){
@@ -109,7 +110,7 @@
                 $check = getimagesize($_FILES["image"]["tmp_name"]);
                 if ($check !== false) {
                     if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                        echo "L'image " . htmlspecialchars(basename($_FILES["image"]["name"])) . " a été uploadée.";
+                        // echo "L'image " . htmlspecialchars(basename($_FILES["image"]["name"])) . " a été uploadée.";
                     } else {
                         die("Erreur lors de l'upload de l'image.");
                     }
@@ -126,7 +127,7 @@
                 $sqlImage = "INSERT INTO Image (id, chemin, alt) VALUES ('$idImage', '$cheminImage', '$alt')";
 
                 if ($conn->query($sqlImage) === TRUE) {
-                    echo "Image ajoutée avec succès !";
+                    // echo "Image ajoutée avec succès !";
                 } else {
                     die("Erreur lors de l'ajout de l'image : " . $conn->error);
                 }
@@ -141,7 +142,7 @@
                 $result = $stmt->execute();
 
                 if ($result) {
-                    echo "Nouvel article ajouté avec succès !";
+                    // echo "Nouvel article ajouté avec succès !";
                     header("Location: dashboard.php"); // Redirection vers le dashboard
                     exit();
                 } else {

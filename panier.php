@@ -54,7 +54,7 @@
             $quantite = $articleInfo[1]; // La seconde est le nombre d'occurrences de l'item
 
             // Connection à la db
-            $conn = connectionBDLocalhost();
+            $conn = connectionBD();
             mysqli_set_charset($conn, "utf8mb4");
 
             if ($conn->connect_error) {
