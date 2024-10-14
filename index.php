@@ -75,16 +75,16 @@
     </div>
 
     <?php
-    // Initialize the 'panier' if it's not already set
+    // Initialise le panier s'il n'existe pas
     if (!isset($_SESSION['panier'])) {
         $_SESSION['panier'] = array();
     }
 
-    // Get the article ID from the POST request
-    $article_id = $_POST['article_id'];
+    // @ est utilise pour supprimer les erreurs si notre panier est vide
+    $article_id = @$_POST['article_id'];
 
-    // Function to find if the article exists in the array and return its index
-    function find_article_index($panier, $article_id) {
+    // trouve l'index de l'article dans le panier
+    function trouverIndexDesArticles($panier, $article_id) {
         foreach ($panier as $index => $item) {
             if ($item[0] == $article_id) {
                 return $index;
@@ -93,14 +93,13 @@
         return false;
     }
 
-    // Check if the article already exists in the array
-    $article_index = find_article_index($_SESSION['panier'], $article_id);
+    // Verifier que l'article existe ou pas dans le panier
+    $article_index = trouverIndexDesArticles($_SESSION['panier'], $article_id);
 
     if ($article_index !== false) {
-        // If the article already exists, increment the count (assuming the second value holds count)
+        // Si l'article existe, on augmente son nombre
         $_SESSION['panier'][$article_index][1] += 1;
     } else {
-        // If it doesn't exist, add it with a default count of 1
         array_push($_SESSION['panier'], [$article_id, 1]);
     }
     ?>

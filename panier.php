@@ -50,11 +50,10 @@
     
         <?php
         foreach ($_SESSION['panier'] as $key => $articleInfo) {
-            // $articleInfo now contains [article_id, boolean]
-            $articleId = $articleInfo[0]; // The first value is the article ID
-            $quantite = $articleInfo[1]; // The second value is whether it's already displayed
+            $articleId = $articleInfo[0]; // La premiere valeure est l'ID
+            $quantite = $articleInfo[1]; // La seconde est le nombre d'occurrences de l'item
 
-            // Connection to the database
+            // Connection à la db
             $conn = connectionBDLocalhost();
             mysqli_set_charset($conn, "utf8mb4");
 
@@ -62,21 +61,19 @@
                 die("Connection failed: " . $conn->connect_error);
             }
 
-            // SQL query to fetch article details
+            // Requete pour recupere les détails de la requete
             $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
                     FROM Article
                     LEFT JOIN Image ON Article.imageId = Image.id
                     LEFT JOIN Categorie ON Article.categorieId = Categorie.id
                     WHERE Article.id = ?;";
             
+            //Exec de la resuete parametree
             $requete = $conn->prepare($sql);
             $requete->bind_param("i", $articleId);
             $requete->execute();
             $result = $requete->get_result();
             
-            // Fetch article details and display it
-            $compteur = $_SESSION['panier'][1]; // Counts occurrences of article IDs
-
             foreach ($result as $article) { ?>
                 <tr>
                     <th scope="row" class="d-none"><?= $article['id'] ?></th>
@@ -84,13 +81,12 @@
                     <td><?= $article['description'] ?></td>
                     <td>
                         <?php
-                            // Display total price (price * quantity)
+                            // Affiche le prix en fonction de la quantite
                             echo $article['prix'] * $quantite;
                         ?>
                     </td>
                     <td>
                         <?php
-                            // Display the quantity
                             echo $quantite;
                         ?>
                     </td>
