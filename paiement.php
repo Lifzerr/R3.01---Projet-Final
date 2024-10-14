@@ -43,6 +43,7 @@
                 <button type="submit" class="btn btn-primary">Enregistrer le paiement</button>
             </div>
         </form>
+    </div>
 
     <?php
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {

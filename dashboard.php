@@ -25,7 +25,7 @@ require_once('fonctions.php');
     <div class="container mt-5">
         <div id="main" class="card card-body">
         <div class="card-header d-flex justify-content-between">
-            <h2 class="title d-md-inline-flex">Liste des articles</h2>
+            <h2 class="title d-md-inline-flex">Dashboard</h2>
             <button type="button" class="btn btn-primary d-md-inline-flex mb-2" onclick="window.location.href='ajout-materiel.php'">Ajouter un article</button>
         </div>
         
@@ -78,7 +78,7 @@ require_once('fonctions.php');
                     <th scope="row" class="d-none"><?= $article['id']?></th>
                     <th scope="row"><?= $article['titre']?></th>
                     <td><?= $article['description']?></td>
-                    <td><?= $article['prix']?></td>
+                    <td><?= $article['prix']*1?></td>
                     <td><?= $article['quantiteDispo']?></td>
                     <td><?= $article['chemin']?></td>
                     <td> <button class="btn btn-warning btn-sm float-right btnModifier" data-id="<?= $article['id'] ?>">Modifier</button> </td>

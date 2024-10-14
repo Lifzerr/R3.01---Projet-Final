@@ -107,9 +107,15 @@ function genererFooter() {
                 <h5>Liens Utiles</h5>
                 <ul class="list-unstyled">
                     <li><a href="index.php" class="text-white">Accueil</a></li>
-                    <li><a href="panier.php" class="text-white">Panier</a></li>
-                    <li><a href="login.html" class="text-white">Se connecter</a></li>
-                    <li><a href="contact.php" class="text-white">Contact</a></li>
+                    <li><a href="panier.php" class="text-white">Panier</a></li>';
+                    if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
+                        echo '
+                                <li><a href="logout.php" class="text-white">Se déconnecter</a></li>';
+                    } else {
+                        echo '
+                                <li><a href="login.html" class="text-white">Se connecter</a></li>';
+                    }
+                    echo '<li><a href="contact.php" class="text-white">Contact</a></li>
                 </ul>
             </div>
             <div class="col-md-4">
