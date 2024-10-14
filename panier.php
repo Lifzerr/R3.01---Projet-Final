@@ -67,14 +67,8 @@
                     
                     // Display les articles
                     foreach($result as $key => $article) { 
-                        $compteur = array_count_values($_SESSION['panier']);
-                        $premiereOccurence = array_search($article['id'], $_SESSION['panier']); // Use the article ID as the value to search for
-                        if ($compteur[$article['id']] > 1) {
-                            // Display the article only once
-                            echo $compteur[$article['id']];
-                            //$compteur[$article['id']] = array_count_values($_SESSION['panier']);
-                            //unset($_SESSION['panier'][$premiereOccurence]);
-                        }
+                        $compteur = array_count_values($_SESSION['panier']); //Compte le nombre d'occurrences de chaque valeur
+                        $premiereOccurence = array_search($article['id'], $_SESSION['panier']); //Récupère la première occurence de l'article
                         ?>
                         <tr>
                             <th scope="row" class="d-none"><?= $article['id']?></th>
@@ -82,27 +76,20 @@
                             <td><?= $article['description']?></td>
                             <td>
                                 <?php
+                                    //Affichage du prix en fonction de la quantité
                                     echo $article['prix'] * $compteur[$article['id']];
                                 ?>
                             </td>
                             <td>
                             <?php
-                                // Display the count of the article in the cart
-                                if (isset($compteur[$article['id']]) && $compteur[$article['id']] > 1) {
-                                    // Display the quantity if greater than 1
-                                    echo $compteur[$article['id']];
-                                } else {
-                                    // Display '1' if the quantity is exactly 1
-                                    echo "1";
-                                }
+                                //Affichage de la quantité
+                                echo $compteur[$article['id']];
                             ?>
                             </td>
                         </tr>
                         <?php 
                     }}
-                ?>
-                
-                
+                ?>                
                 <?php 
                     $conn->close();
                 ?>
