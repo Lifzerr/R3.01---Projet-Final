@@ -36,65 +36,77 @@
                 </tr>
             </thead>
             <tbody>
-                <?php 
-                    foreach ($_SESSION['panier'] as $key => $value) {
-                        // Connection Bd
-                        $conn = connectionBDLocalhost();
-                        mysqli_set_charset($conn, "utf8mb4");
+    <?php 
+    var_dump($_SESSION['panier']);          //A true quand reload de la page car pas de changement de var
+    foreach ($_SESSION['panier'] as $key => $articleInfo) {
+        // $articleInfo now contains [article_id, boolean]
+        $articleId = $articleInfo[0]; // The first value is the article ID
+        $isDisplayed = $articleInfo[1]; // The second value is whether it's already displayed
 
-                        if ($conn->connect_error) {
-                            die("Connection failed: " . $conn->connect_error);
-                        }
+        // Connection to the database
+        $conn = connectionBDLocalhost();
+        mysqli_set_charset($conn, "utf8mb4");
 
-                        // Exécuter la requête
-                        $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
-                                FROM Article
-                                LEFT JOIN Image ON Article.imageId = Image.id
-                                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
-                                WHERE Article.id = ?;";
-                        
-                        $requete = $conn->prepare($sql);
-                        $requete->bind_param("i", $value);
-                        $requete->execute();
-                        $result = $requete->get_result();
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
 
-                        if (!$result) {
-                            die("Erreur lors de l'exécution de la requête : " . $conn->error);
-                        }
-                        if ($result->num_rows == 0) {
-                            echo "pas d'articles disponibles !";
-                        } 
-                    
-                    // Display les articles
-                    foreach($result as $key => $article) { 
-                        $compteur = array_count_values($_SESSION['panier']); //Compte le nombre d'occurrences de chaque valeur
-                        $premiereOccurence = array_search($article['id'], $_SESSION['panier']); //Récupère la première occurence de l'article
-                        ?>
-                        <tr>
-                            <th scope="row" class="d-none"><?= $article['id']?></th>
-                            <th scope="row"><?= $article['titre']?></th>
-                            <td><?= $article['description']?></td>
-                            <td>
-                                <?php
-                                    //Affichage du prix en fonction de la quantité
-                                    echo $article['prix'] * $compteur[$article['id']];
-                                ?>
-                            </td>
-                            <td>
-                            <?php
-                                //Affichage de la quantité
-                                echo $compteur[$article['id']];
-                            ?>
-                            </td>
-                        </tr>
-                        <?php 
-                    }}
-                ?>                
-                <?php 
-                    $conn->close();
+        // SQL query to fetch article details
+        $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
+                FROM Article
+                LEFT JOIN Image ON Article.imageId = Image.id
+                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
+                WHERE Article.id = ?;";
+        
+        $requete = $conn->prepare($sql);
+        $requete->bind_param("i", $articleId);
+        $requete->execute();
+        $result = $requete->get_result();
+
+        if (!$result) {
+            die("Erreur lors de l'exécution de la requête : " . $conn->error);
+        }
+        if ($result->num_rows == 0) {
+            echo "pas d'articles disponibles !";
+        } 
+        
+        // Fetch article details and display it
+        $compteur = array_count_values(array_column($_SESSION['panier'], 0)); // Counts occurrences of article IDs
+
+        foreach ($result as $article) { 
+            if ($_SESSION['panier'][$key][1] == false) {
+                // Set the article as displayed (replace false with true in the session)
+                $_SESSION['panier'][$key][1] = true; 
+
                 ?>
-            </tbody>
-            </table>
+                <tr>
+                    <th scope="row" class="d-none"><?= $article['id'] ?></th>
+                    <th scope="row"><?= $article['titre'] ?></th>
+                    <td><?= $article['description'] ?></td>
+                    <td>
+                        <?php
+                            // Display total price (price * quantity)
+                            echo $article['prix'] * $compteur[$article['id']];
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                            // Display the quantity
+                            echo $compteur[$article['id']];
+                        ?>
+                    </td>
+                </tr>
+                <?php 
+            }
+        }
+    } 
+    ?>                
+    <?php 
+    $conn->close();
+    ?>
+</tbody>
+</table>
+
         </ul>
         </div>
     </div>

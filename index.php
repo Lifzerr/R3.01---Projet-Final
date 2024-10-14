@@ -79,7 +79,8 @@
             if (!isset($_SESSION['panier'])) {
                 $_SESSION['panier'] = [];
             }
-            array_push($_SESSION['panier'], $_POST['article_id']); // [id, bool]
+            array_push($_SESSION['panier'], [$_POST['article_id'], false]); // [id, bool]
+            var_dump($_SESSION['panier']);
         }
     ?>
 
