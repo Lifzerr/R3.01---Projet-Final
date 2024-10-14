@@ -37,40 +37,50 @@
             </thead>
             <tbody>
                 <?php 
-                    // Connection Bd
-                    $conn = connectionBDLocalhost();
-                    mysqli_set_charset($conn, "utf8mb4");
+                    foreach ($_SESSION['panier'] as $key => $value) {
+                        // Connection Bd
+                        $conn = connectionBDLocalhost();
+                        mysqli_set_charset($conn, "utf8mb4");
 
-                    if ($conn->connect_error) {
-                        die("Connection failed: " . $conn->connect_error);
-                    }
+                        if ($conn->connect_error) {
+                            die("Connection failed: " . $conn->connect_error);
+                        }
 
-                    // Exécuter la requête
-                    $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
-                            FROM Article
-                            LEFT JOIN Image ON Article.imageId = Image.id
-                            LEFT JOIN Categorie ON Article.categorieId = Categorie.id; ";
-                    $result = $conn->query($sql);
+                        // Exécuter la requête
+                        $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
+                                FROM Article
+                                LEFT JOIN Image ON Article.imageId = Image.id
+                                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
+                                WHERE Article.id = ?;";
+                        
+                        $requete = $conn->prepare($sql);
+                        $requete->bind_param("i", $value);
+                        $requete->execute();
+                        $result = $requete->get_result();
 
-                    if (!$result) {
-                        die("Erreur lors de l'exécution de la requête : " . $conn->error);
-                    }
-                    if ($result->num_rows == 0) {
-                        echo "pas d'articles disponibles !";
-                    } 
-                ?>
-                <?php 
+                        if (!$result) {
+                            die("Erreur lors de l'exécution de la requête : " . $conn->error);
+                        }
+                        if ($result->num_rows == 0) {
+                            echo "pas d'articles disponibles !";
+                        } 
+                    
                     // Display les articles
                     foreach($result as $article) { ?>
-                <tr>
-                    <th scope="row" class="d-none"><?= $article['id']?></th>
-                    <th scope="row" ><?= $article['titre']?></th>
-                    <td><?= $article['description']?></td>
-                    <td><?= $article['prix']?></td>
-                    <td><?= $article['quantiteDispo']?></td>
-                </tr>
-                <?php 
+                    <tr>
+                        <th scope="row" class="d-none"><?= $article['id']?></th>
+                        <th scope="row" ><?= $article['titre']?></th>
+                        <td><?= $article['description']?></td>
+                        <td><?= $article['prix']?></td>
+                        <td><?= $article['quantiteDispo']?></td>
+                    </tr>
+                    <?php 
                     }
+                }
+                ?>
+                
+                
+                <?php 
                     $conn->close();
                 ?>
             </tbody>
@@ -80,7 +90,7 @@
     </div>
 
     <?php genererFooter(); ?>
-    
+
     <script src="js/script.js"></script>
 </body>
 </html>

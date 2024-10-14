@@ -58,7 +58,7 @@
                             <input type="hidden" name="article_id" value="<?= $article['id'] ?>">
                             <button type="submit" class="btn btn-primary">Ajouter au panier</button>
                         </form>
-                        <a href="#" class="btn btn-secondary">Details</a>
+                        <a href="#" class="btn btn-secondary">Detail</a>
                     </div>
                     <div class="card-footer">
                         Prix : <?= $article['prix'] ?>€
