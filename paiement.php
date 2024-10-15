@@ -110,7 +110,7 @@ function majStocks()
                     </div>
                     <div class="col-md-6">
                         <label for="inputCity" class="form-label">Numero de la carte</label>
-                        <input type="text" class="form-control" id="inputCity" maxlength="16" placeholder="Ex : 1111222233334444">
+                        <input type="text" class="form-control" id="inputCity" maxlength="16" placeholder="Ex : 1111222233334444" pattern="^(?P<first_char>.)(?:(?!\1).)*\1$">
                     </div>
                     <div class="col-md-2">
                         <label for="inputZip" class="form-label">Cryptogramme</label>
@@ -128,4 +128,5 @@ function majStocks()
         </main>
         <?php genererFooter(); ?>
     </div>
+    
 </body>
