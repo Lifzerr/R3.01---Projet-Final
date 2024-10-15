@@ -85,7 +85,6 @@ require_once('fonctions.php');
                                     <td> <button type="button " class="btn btn-warning btn-sm float-right btnModifier" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>" data-id="<?= $article['id'] ?>">Modifier</button> </td>
                                     <td> <button class="btn btn-danger btn-sm float-right btnSupprimer" data-id="<?= $article['id'] ?>">Supprimer</button> </td>
                                 </tr>
-
                                 <div class="modal fade" id="fenetreModale-<?= $article['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg"> <!-- Utilisation d'une modale large -->
                                         <div class="modal-content">
@@ -94,7 +93,7 @@ require_once('fonctions.php');
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <div class="container mt-5">
+                                                <div class="container mt-2">
                                                     <form action="ajout-materiel.php" method="POST" enctype="multipart/form-data">
                                                         <div class="form-group">
                                                             <label for="titre">Titre</label>
@@ -102,7 +101,7 @@ require_once('fonctions.php');
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="description">Description</label>
-                                                            <textarea class="form-control" id="description" name="description" rows="3" value="<?= $article['quantiteDispo'] ?>" required></textarea>
+                                                            <textarea class="form-control" id="description" name="description" rows="3" required><?= $article['description'] ?></textarea>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="prix">Prix (€)</label>
@@ -115,7 +114,7 @@ require_once('fonctions.php');
                                                         <div class="form-group">
                                                             <label for="categorie">Catégorie</label>
                                                             <select class="form-control" id="categorie" name="categorie" required>
-                                                                <option value="Value" disabled selected></option>  <!-- ATTENTION -->
+                                                                <option value="" disabled selected><?= $article['categorie']?></option>
                                                                 <!-- Remplir avec les options de catégorie -->
                                                                 <?php
                                                                 $sql = "SELECT * FROM Categorie;";
@@ -135,7 +134,7 @@ require_once('fonctions.php');
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="chemin">Texte alternatif à l'image</label>
-                                                            <input type="text" class="form-control" id="alt" name="alt" placeholder="Alt de l'image" required>
+                                                            <input type="text" class="form-control" id="alt" name="alt" value="<?= $article['alt'] ?>" required>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="image">Uploader une image</label>
@@ -153,7 +152,6 @@ require_once('fonctions.php');
                                         </div>
                                     </div>
                                 </div>
-
                             <?php
                             }
                             $conn->close();
