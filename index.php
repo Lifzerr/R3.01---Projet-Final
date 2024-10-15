@@ -64,7 +64,7 @@ require_once('fonctions.php');
                                     <button type="submit" class="btn btn-primary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
                                 </form>
                             </div>
-                            
+
                         </div>
                         <div class="card-footer">
                             Prix : <?= $article['prix'] ?>€
