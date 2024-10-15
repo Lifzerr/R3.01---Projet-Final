@@ -1,63 +1,82 @@
 <?php
-    require_once('fonctions.php');
-    session_start();
+require_once('fonctions.php');
+session_start();
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
-        $inputDate = $_POST['validity'];
-        $inputDateTime = DateTime::createFromFormat('m/y', $inputDate);
-        
-        if ($inputDateTime === false) {
-            $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
-            header("Location: " . $_SERVER['PHP_SELF']);
-            exit();
-        }
-        
-        $currentDate = new DateTime();
-        $threeMonthsLater = clone $currentDate;
-        $threeMonthsLater->modify('+3 months');
-        
-        if ($inputDateTime > $threeMonthsLater) {
-            majStocks();
-            header("Location: index.php");
-            exit();
-        } else {
-            header("Location: panier.php");
-            exit();
-        }
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
+    $inputDate = $_POST['validity'];
+    $inputDateTime = DateTime::createFromFormat('m/y', $inputDate);
+
+    if ($inputDateTime === false) {
+        $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     }
 
-    function majStocks() {
-        if (empty($_SESSION['panier'])) {
-            throw new Exception("Le panier est vide.");
-        }
-    
-        
-        $conn = connectionBD();
-        mysqli_set_charset($conn, "utf8mb4");
-        
-        if ($conn->connect_error) {
-            throw new Exception("Erreur de connexion à la base de données : " . $conn->connect_error);
-        }
-        
-            
-            foreach ($_SESSION['panier'] as $article) {
-                $articleId = isset($article[0]) ? (int)$article[0] : 0;
-                $quantite = isset($article[1]) ? (int)$article[1] : 0;
-            
-                // Vérifie que l'ID de l'article et la quantité sont valides
-                    $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("ii", $quantite, $articleId);
-                    
-                    if (!$stmt->execute()) {
-                        throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
-                    }
-                } 
-                    $stmt->close();
-        $conn->close();
+    $currentDate = new DateTime();
+    $threeMonthsLater = clone $currentDate;
+    $threeMonthsLater->modify('+3 months');
+
+    if ($inputDateTime > $threeMonthsLater) {
+        majStocks();
+        header("Location: index.php");
+        exit();
+    } else {
+        header("Location: panier.php");
+        exit();
+    }
+}
+
+function majStocks()
+{
+    if (empty($_SESSION['panier'])) {
+        throw new Exception("Le panier est vide.");
+    }
+
+    $conn = connectionBD();
+    mysqli_set_charset($conn, "utf8mb4");
+
+    if ($conn->connect_error) {
+        throw new Exception("Erreur de connexion à la base de données : " . $conn->connect_error);
+    }
+
+    try {
+        $conn->begin_transaction(); // Démarrer une transaction pour assurer que toutes les mises à jour se fassent ou aucune.
+
+        foreach ($_SESSION['panier'] as $article) {
+            $articleId = isset($article[0]) ? (int)$article[0] : 0;
+            $quantite = isset($article[1]) ? (int)$article[1] : 0;
+
+            // Vérifie que l'ID de l'article et la quantité sont valides
+            if ($articleId > 0 && $quantite > 0) {
+                $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ii", $quantite, $articleId);
+
+                if (!$stmt->execute()) {
+                    throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
+                }
+
+                $stmt->close(); // Fermer le statement après chaque exécution
+            } else {
+                throw new Exception("Le format du panier est invalide pour l'article avec ID " . htmlspecialchars($articleId));
             }
-    
-    
+        }
+
+        $conn->commit(); // Valider la transaction si tout se passe bien
+
+        // Vider le panier après la mise à jour des stocks
+        unset($_SESSION['panier']);
+
+    } catch (Exception $e) {
+        $conn->rollback(); // Annuler la transaction en cas d'erreur
+        throw $e; // Relancer l'exception pour la gérer ailleurs si nécessaire
+    } finally {
+        $conn->close(); // Fermer la connexion
+    }
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -71,7 +90,7 @@
 </head>
 
 <body>
-    <?php genererNav(); ?>  
+    <?php genererNav(); ?>
 
     <div class="d-flex flex-column min-vh-100"> <!-- Conteneur principal -->
         <main class="flex-grow-1">
