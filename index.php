@@ -67,7 +67,7 @@ require_once('fonctions.php');
 
                         </div>
                         <div class="card-footer">
-                            Prix : <?= $article['prix'] ?>€
+                            Prix : <?= $article['prix']*1 ?>€
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,7 @@ require_once('fonctions.php');
                                 </div>
                                 <p><strong>ID:</strong> <?= htmlspecialchars($article['id']) ?></p>
                                 <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($article['description'])) ?></p>
-                                <p><strong>Prix:</strong> <?= htmlspecialchars($article['prix']) ?> €</p>
+                                <p><strong>Prix:</strong> <?= htmlspecialchars($article['prix']*1) ?> €</p>
                                 <p><strong>Quantité disponible:</strong> <?= htmlspecialchars($article['quantiteDispo']) ?></p>
                             </div>
                             <div class="modal-footer">
