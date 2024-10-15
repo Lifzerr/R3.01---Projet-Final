@@ -21,7 +21,7 @@
             header("Location: index.php");
             exit();
         } else {
-            header("Location: paiement.php");
+            header("Location: panier.php");
             exit();
         }
     }
@@ -31,6 +31,8 @@
             throw new Exception("Le panier est vide.");
         }
     
+        var_dump($_SESSION['panier']);
+
         $conn = connectionBD();
         mysqli_set_charset($conn, "utf8mb4");
         
@@ -42,14 +44,13 @@
             $conn->begin_transaction();
             
             foreach ($_SESSION['panier'] as $article) {
-                // Vérifier que l'élément a un ID d'article et une quantité valide
-                if (isset($article['id']) && isset($article['quantite'])) {
-                    // Convertir l'ID de l'article et la quantité en entiers
-                    $articleId = (int)$article['id'];
-                    $quantite = (int)$article['quantite'];
+                // Vérifie que l'article contient bien l'ID et la quantité
+                if (isset($article[0]) && isset($article[1])) {
+                    $articleId = (int)$article[0];
+                    $quantite = (int)$article[1];
     
                     if ($articleId > 0 && $quantite > 0) {
-                        $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
+                        $sql = "UPDATE Article SET stock = GREATEST(0, stock - ?) WHERE id = ?";
                         $stmt = $conn->prepare($sql);
                         $stmt->bind_param("ii", $quantite, $articleId);
                         
@@ -68,7 +69,7 @@
             
             $conn->commit();
             // Vider le panier après la mise à jour réussie des stocks
-            $_SESSION['panier'] = []; 
+            $_SESSION['panier'] = []; // Vider le panier après la mise à jour des stocks
         } catch (Exception $e) {
             $conn->rollback();
             throw $e;
@@ -77,7 +78,9 @@
         }
     }
     
+    
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -117,7 +120,7 @@
                     </div>
                     <div class="col-md-2">
                         <label for="validity" class="form-label">Date de validité</label>
-                        <input type="month" class="form-control" name="validity" id="validity" pattern="(0[1-9]|1[0-2])/\d{2}" placeholder="Ex : 01/26">
+                        <input type="text" class="form-control" name="validity" id="validity" pattern="(0[1-9]|1[0-2])/\d{2}" placeholder="Ex : 01/26">
                     </div>
                     <div class="col-12">
                         <button type="submit" maxlength="5" class="btn btn-primary">Enregistrer le paiement</button>
