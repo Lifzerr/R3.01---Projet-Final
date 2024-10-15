@@ -107,13 +107,6 @@ require_once('fonctions.php');
     </div>
 
     <?php
-    // Initialise le panier s'il n'existe pas
-    if (!isset($_SESSION['panier'])) {
-        $_SESSION['panier'] = array();
-    }
-
-    // @ est utilise pour supprimer les erreurs si notre panier est vide
-    $article_id = @$_POST['article_id'];
 
     // trouve l'index de l'article dans le panier
     function trouverIndexDesArticles($panier, $article_id)
@@ -126,14 +119,27 @@ require_once('fonctions.php');
         return false;
     }
 
-    // Verifier que l'article existe ou pas dans le panier
-    $article_index = trouverIndexDesArticles($_SESSION['panier'], $article_id);
+    // Initialise le panier s'il n'existe pas
+    if (!isset($_SESSION['panier'])) {
+        $_SESSION['panier'] = array();
+    }
 
-    if ($article_index !== false) {
-        // Si l'article existe, on augmente son nombre
-        $_SESSION['panier'][$article_index][1] += 1;
+    // Récupère l'ID de l'article depuis le formulaire (assure que c'est un entier)
+    $article_id = isset($_POST['article_id']) ? (int)$_POST['article_id'] : 0;
+
+    // Vérifie que l'ID de l'article est valide
+    if ($article_id > 0) {
+        // Trouve l'index de l'article dans le panier
+        $article_index = trouverIndexDesArticles($_SESSION['panier'], $article_id);
+
+        if ($article_index !== false) {
+            // Si l'article existe, on augmente son nombre
+            $_SESSION['panier'][$article_index][1] += 1;
+        } else {
+            $_SESSION['panier'][] = [$article_id, 1];
+        }
     } else {
-        array_push($_SESSION['panier'], [$article_id, 1]);
+        echo "ID d'article invalide.";
     }
     ?>
 
