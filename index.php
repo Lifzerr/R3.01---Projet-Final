@@ -90,8 +90,7 @@ require_once('fonctions.php');
                             </div>
                             <div class="modal-footer">
                                 <form method="post" action="index.php">
-                                    <input type="hidden" name="article_id" value="<?= htmlspecialchars($article['id']) ?>">
-                                    <button type="submit" class="btn btn-secondary">Ajouter au panier</button>
+                                    <button type="submit" class="btn btn-secondary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
                                 </form>
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
                             </div>
