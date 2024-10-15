@@ -13,7 +13,8 @@
 </head>
 <body>
     <?php genererNav(); ?>
-
+    <div class="d-flex flex-column min-vh-100"> <!-- Conteneur principal -->
+    <main class="flex-grow-1">
     <div class="container mt-5">
         <div id="main" class="card card-body">
         <div class="card-header d-flex justify-content-between">
@@ -105,8 +106,9 @@
         </ul>
         </div>
     </div>
-
+</main>
     <?php genererFooter(); ?>
+</div>
     <script src="js/script.js"></script>
 </body>
 </html>
