@@ -1,34 +1,72 @@
 <?php
-require_once('fonctions.php');
-session_start();
+    require_once('fonctions.php');
+    session_start();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
-    // Récupération de la valeur du champ input
-    $inputDate = $_POST['validity']; // Assurez-vous que le nom du champ correspond à votre formulaire
-
-    // Conversion de la date d'entrée en objet DateTime
-    $inputDateTime = DateTime::createFromFormat('m/y', $inputDate);
-
-    if ($inputDateTime === false) {
-        die("Format de date invalide. Utilisez mm/aa.");
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
+        $inputDate = $_POST['validity'];
+        $inputDateTime = DateTime::createFromFormat('m/y', $inputDate);
+        
+        if ($inputDateTime === false) {
+            $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+        
+        $currentDate = new DateTime();
+        $threeMonthsLater = clone $currentDate;
+        $threeMonthsLater->modify('+3 months');
+        
+        if ($inputDateTime > $threeMonthsLater) {
+            try {
+                majStocks();
+                $_SESSION['success'] = "Commande traitée avec succès. Le panier a été vidé et les stocks ont été mis à jour.";
+            } catch (Exception $e) {
+                $_SESSION['error'] = "Une erreur est survenue lors du traitement de la commande : " . $e->getMessage();
+            }
+            header("Location: index.php");
+            exit();
+        } else {
+            $_SESSION['error'] = "La date de validité doit être supérieure à 3 mois à partir d'aujourd'hui.";
+            exit();
+        }
     }
 
-    // Obtention de la date actuelle
-    $currentDate = new DateTime();
+    function majStocks() {
+        if (empty($_SESSION['panier'])) {
+            throw new Exception("Le panier est vide.");
+        }
 
-    // Ajout de 3 mois à la date actuelle pour la comparaison
-    $threeMonthsLater = clone $currentDate;
-    $threeMonthsLater->modify('+3 months');
-
-    // Comparaison des dates
-    if ($inputDateTime > $threeMonthsLater) {
-        // Redirection vers index.php si la date saisie est supérieure à la date actuelle + 3 mois
-        header("Location: index.php");
-        exit();
-    } else {
-        echo "La date saisie est valide.";
+        $conn = connectionBD();
+        mysqli_set_charset($conn, "utf8mb4");
+        
+        if ($conn->connect_error) {
+            throw new Exception("Erreur de connexion à la base de données : " . $conn->connect_error);
+        }
+        
+        try {
+            $conn->begin_transaction();
+            
+            foreach ($_SESSION['panier'] as $articleId => $quantite) {
+                $sql = "UPDATE Article SET stock = GREATEST(0, stock - ?) WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ii", $quantite, $articleId);
+                
+                if (!$stmt->execute()) {
+                    throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
+                }
+                
+                $stmt->close();
+            }
+            
+            $conn->commit();
+            unset($_SESSION['panier']);
+        } catch (Exception $e) {
+            $conn->rollback();
+            throw $e;
+        } finally {
+            $conn->close();
+        }
     }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
