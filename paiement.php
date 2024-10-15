@@ -17,16 +17,11 @@
         $threeMonthsLater->modify('+3 months');
         
         if ($inputDateTime > $threeMonthsLater) {
-            try {
-                majStocks();
-                $_SESSION['success'] = "Commande traitée avec succès. Le panier a été vidé et les stocks ont été mis à jour.";
-            } catch (Exception $e) {
-                $_SESSION['error'] = "Une erreur est survenue lors du traitement de la commande : " . $e->getMessage();
-            }
+            majStocks();
             header("Location: index.php");
             exit();
         } else {
-            $_SESSION['error'] = "La date de validité doit être supérieure à 3 mois à partir d'aujourd'hui.";
+            header("Location: paiement.php");
             exit();
         }
     }
@@ -35,7 +30,7 @@
         if (empty($_SESSION['panier'])) {
             throw new Exception("Le panier est vide.");
         }
-
+    
         $conn = connectionBD();
         mysqli_set_charset($conn, "utf8mb4");
         
@@ -46,20 +41,34 @@
         try {
             $conn->begin_transaction();
             
-            foreach ($_SESSION['panier'] as $articleId => $quantite) {
-                $sql = "UPDATE Article SET stock = GREATEST(0, stock - ?) WHERE id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ii", $quantite, $articleId);
-                
-                if (!$stmt->execute()) {
-                    throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
+            foreach ($_SESSION['panier'] as $article) {
+                // Vérifier que l'élément a un ID d'article et une quantité valide
+                if (isset($article['id']) && isset($article['quantite'])) {
+                    // Convertir l'ID de l'article et la quantité en entiers
+                    $articleId = (int)$article['id'];
+                    $quantite = (int)$article['quantite'];
+    
+                    if ($articleId > 0 && $quantite > 0) {
+                        $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("ii", $quantite, $articleId);
+                        
+                        if (!$stmt->execute()) {
+                            throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
+                        }
+    
+                        $stmt->close();
+                    } else {
+                        throw new Exception("L'ID de l'article ou la quantité est invalide après conversion en entier.");
+                    }
+                } else {
+                    throw new Exception("Le format du panier est invalide pour l'article.");
                 }
-                
-                $stmt->close();
             }
             
             $conn->commit();
-            unset($_SESSION['panier']);
+            // Vider le panier après la mise à jour réussie des stocks
+            $_SESSION['panier'] = []; 
         } catch (Exception $e) {
             $conn->rollback();
             throw $e;
@@ -67,6 +76,7 @@
             $conn->close();
         }
     }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
