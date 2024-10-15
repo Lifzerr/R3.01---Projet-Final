@@ -28,25 +28,39 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
     return $img_dest;
 }
 
-function connectionBDLakartxela() {
-    // Connexion à la BD
-    $servername = "lakartxela.iutbayonne.univ-pau.fr";
-    $username = "mbourciez_pro";
-    $password = "mbourciez_pro";
-    $dbname = "mbourciez_pro";
+function connectionBD() {
+    // Détection de l'environnement
+    $serverAvailable = @fsockopen("lakartxela.iutbayonne.univ-pau.fr", 3306, $errno, $errstr, 1);
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    return $conn;
-}
+    if ($serverAvailable) {
+        // Connexion au serveur distant
+        $servername = "lakartxela.iutbayonne.univ-pau.fr";
+        $username = "mbourciez_pro";
+        $password = "mbourciez_pro";
+        $dbname = "mbourciez_pro";
 
-function connectionBDLocalhost() {
-    // Connexion à la BD
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "mbourciez_pro";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            die("Échec de la connexion au serveur distant : " . $conn->connect_error);
+        }
+    } else {
+        // Connexion au serveur local (WAMP ou LAMP)
+        $servernameLocal = "localhost";
+        $usernameLocal = "root";
+        $passwordLocalWamp = "";
+        $passwordLocalLamp = "root";
+        $dbnameLocal = "mbourciez_pro";
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
+        // Tentative de connexion avec le mot de passe WAMP
+        $conn = new mysqli($servernameLocal, $usernameLocal, $passwordLocalWamp, $dbnameLocal);
+        if ($conn->connect_error) {
+            // Tentative de connexion avec le mot de passe LAMP
+            $conn = new mysqli($servernameLocal, $usernameLocal, $passwordLocalLamp, $dbnameLocal);
+            if ($conn->connect_error) {
+                die("Échec de la connexion : " . $conn->connect_error);
+            }
+        }
+    }
     return $conn;
 }
 
