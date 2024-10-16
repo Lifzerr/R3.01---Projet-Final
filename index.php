@@ -52,9 +52,9 @@ require_once('fonctions.php');
         <div class="row">
             <?php foreach ($result as $article) { ?>
                 <div class="col-md-4 mb-4">
-                    <div class="card text-decoration-none" style="width: 18rem; min-height: 250px;" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">
+                    <div class="card text-decoration-none" style="width: 18rem; min-height: 250px;">
                         <a>
-                            <img src="<?= redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200); ?>"  alt="<?= $article['alt'] ?>" class="card-img-top p-2 rounded-top">
+                            <img src="<?= redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200); ?>"  alt="<?= $article['alt'] ?>" class="card-img-top p-2 rounded-top" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">
                         </a>
                         <div class="card-body">
                             <h5 class="card-title"><?= $article['titre'] ?></h5>
