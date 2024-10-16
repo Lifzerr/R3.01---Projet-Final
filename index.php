@@ -53,15 +53,18 @@ require_once('fonctions.php');
             <?php foreach ($result as $article) { ?>
                 <div class="col-md-4 mb-4">
                     <a class="card text-decoration-none" style="width: 18rem; min-height: 250px;" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">
-                        <img src="<?= redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200); ?>" class="card-img-top" alt="<?= $article['alt'] ?>">
+                        <img src="<?= redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200); ?>"  alt="<?= $article['alt'] ?>" class="card-img-top p-2 rounded-top">
                         <div class="card-body">
                             <h5 class="card-title"><?= $article['titre'] ?></h5>
                             <p class="card-text"><?= $article['description'] ?></p>
                             <div class="d-flex justify-content-between">
                                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">Details</button>
                                 <form method="post" action="index.php" class="d-md-inline-flex">
-                                    <!-- <input type="hidden"> -->
-                                    <button type="submit" class="btn btn-primary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
+                                    <?php if ($article['quantiteDispo'] == 0) { ?>
+                                        <button type="button" class="btn btn-danger" disabled>Indisponible</button>
+                                    <?php } else { ?>
+                                        <button type="submit" class="btn btn-primary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
+                                    <?php } ?>
                                 </form>
                             </div>
 
@@ -73,17 +76,17 @@ require_once('fonctions.php');
                 </div>
 
                 <div class="modal fade" id="fenetreModale-<?= $article['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg"> <!-- Utilisation d'une modale large -->
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel"><?= htmlspecialchars($article['titre']) ?></h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <div class="text-center"> <!-- Centrer le contenu -->
+                                <div class="text-center"> 
                                     <img src="<?= htmlspecialchars($article['chemin']) ?>" alt="<?= htmlspecialchars($article['alt']) ?>" class="img-fluid mb-3" style="max-height: 300px;"> <!-- Image responsive -->
                                 </div>
-                                <p><strong>ID:</strong> <?= htmlspecialchars($article['id']) ?></p>
+                                <!-- <p><strong>ID:</strong> <?= htmlspecialchars($article['id']) ?></p> -->
                                 <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($article['description'])) ?></p>
                                 <p><strong>Prix:</strong> <?= htmlspecialchars($article['prix']*1) ?> €</p>
                                 <p><strong>Quantité disponible:</strong> <?= htmlspecialchars($article['quantiteDispo']) ?></p>
@@ -138,8 +141,6 @@ require_once('fonctions.php');
         } else {
             $_SESSION['panier'][] = [$article_id, 1];
         }
-    } else {
-        echo "ID d'article invalide.";
     }
     ?>
 
