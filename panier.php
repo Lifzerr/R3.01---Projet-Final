@@ -35,12 +35,11 @@
                         echo "<p>Votre panier est vide !</p>";
                     } else { ?>
 
-                    <ul id="items" class="list-group">
-                        <li class="list-group-item">
+                    
                         <table class="table">
                         <thead>
                             <tr>
-                                <th class="d-none">Article</th>
+                                <th>Article</th>
                                 <th>Description</th>
                                 <th>Prix</th>
                                 <th>Quantité</th>
@@ -111,8 +110,7 @@
                     $conn->close(); // Fermer la connexion après avoir traité tous les articles
                     ?>                
                     </tbody>
-                    </table>
-                    </ul>
+                    </table>    
                     <?php } // Fin de la vérification du panier ?>
                 </div>
             </div>
