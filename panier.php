@@ -33,14 +33,19 @@
                 <div id="main" class="card card-body">
                     <div class="card-header d-flex justify-content-between">
                         <h2 class="title d-md-inline-flex">Votre Panier</h2>
+                        <div class ="d-flex justify-content-around col-mb-4">
                         <?php 
                             // Désactiver le bouton de paiement si le panier est vide
                             if (empty($_SESSION['panier'])) {
+                                echo "<button type='button' disabled class='btn btn-danger d-md-inline-flex mb-2 mx-4'>Vider le panier</button>";
                                 echo "<button type='button' disabled class='btn btn-primary d-md-inline-flex mb-2'>Payer</button>";
                             } else {
+                                echo "<button type='button' class='btn btn-danger d-md-inline-flex mb-2 mx-4' onclick=\"if(confirm('Êtes-vous sûr de vouloir vider le panier ?')) { window.location.href='vider_panier.php'; }\">Vider le panier</button>";
                                 echo "<button type='button' class='btn btn-primary d-md-inline-flex mb-2' onclick=\"window.location.href='paiement.php'\">Payer</button>";
                             }
                         ?>
+                        </div>
+                        
                     </div>
                     
                     <?php 
