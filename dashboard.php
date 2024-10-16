@@ -72,7 +72,7 @@ require_once('fonctions.php');
                                 echo "pas d'articles disponibles !";
                             }
                             ?>
-                            
+
                             <?php
                             // Enregistrer les modifications
                             if (
@@ -93,12 +93,45 @@ require_once('fonctions.php');
                                 $alt = $_POST['alt'];
                                 //$image = $_FILES['image'];
 
-                                //Modifier les parametres de l'article
-                                $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ?, categorieId = ? WHERE id = ?";
+                                //Requete principale
+                                $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Article.imageId, Article.categorieId, Image.id, Image.chemin, Image.alt, Categorie.nom, Categorie.id AS categorie
+                                FROM Article
+                                LEFT JOIN Image ON Article.imageId = Image.id
+                                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
+                                WHERE Article.id = ?;";
                                 $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("ssdiii", $titre, $description, $prix, $quantiteDispo, $categorie, $articleId);
+                                $stmt->bind_param("i", $articleId);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                $stmt->close();
+
+                                //Modifier les parametres de l'article
+                                $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ? WHERE id = ?";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param("ssdii", $titre, $description, $prix, $quantiteDispo, $articleId);
                                 $result = $stmt->execute();
                                 $stmt->close();
+
+                                //Modifier les parametres de la categorie
+                                // $sql = "SELECT id FROM Categorie WHERE nom = ?";
+                                // $stmt = $conn->prepare($sql);
+                                // $stmt->bind_param("s", $categorie);
+                                // $resultCat = $stmt->execute();
+                                // var_dump($resultCat);
+                                // $stmt->close();
+
+                                // //Modifier la categorie de l'article
+                                // $sql = "UPDATE Article SET categorieId = ? WHERE id = ?";
+                                // $stmt = $conn->prepare($sql);
+                                // $stmt->bind_param("ii", $resultCat, $articleId);
+                                // $resultat = $stmt->execute();
+                                // $stmt->close();
+
+                                // Insertion de l'image dans la BD
+                                // $cheminImage = "images/";
+                                // $nomImage = $image['name'];
+                                // $cheminImage = $chemin . $nomImage;
+                                // $sqlImage = "INSERT INTO Image (id, chemin, alt) VALUES ('$idImage', '$cheminImage', '$alt')";
 
                                 header('location: dashboard.php');
                             }
