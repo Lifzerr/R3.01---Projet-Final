@@ -40,7 +40,7 @@
                                 echo "<button type='button' disabled class='btn btn-danger d-md-inline-flex mb-2 mx-4'>Vider le panier</button>";
                                 echo "<button type='button' disabled class='btn btn-primary d-md-inline-flex mb-2'>Payer</button>";
                             } else {
-                                echo "<button type='button' class='btn btn-danger d-md-inline-flex mb-2 mx-4' onclick=\"if(confirm('Êtes-vous sûr de vouloir vider le panier ?')) { window.location.href='vider_panier.php'; }\">Vider le panier</button>";
+                                echo "<button type='button' class='btn btn-danger d-md-inline-flex mb-2 mx-4'onclick=\"viderPanier()\">Vider le panier</button>";
                                 echo "<button type='button' class='btn btn-primary d-md-inline-flex mb-2' onclick=\"window.location.href='paiement.php'\">Payer</button>";
                             }
                         ?>
@@ -133,6 +133,18 @@
             </div>
         </main>
         <?php genererFooter(); ?>
+
+        <?php 
+            // Vérifier si une requête POST a été faite pour vider le panier
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'vider_panier') {
+                // Vider le panier
+                unset($_SESSION['panier']);
+
+                // Réponse à envoyer au client
+                echo "Panier vidé";
+                exit;
+            }
+        ?>
     </div>
     <script src="js/scriptPanier.js"></script>
 </body>
