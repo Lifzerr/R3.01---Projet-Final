@@ -1,82 +1,82 @@
 <?php
-require_once('fonctions.php');
-session_start();
+    require_once('fonctions.php');
+    session_start();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
-    $inputDate = $_POST['validity'];
-    $inputDateTime = DateTime::createFromFormat('m/y', $inputDate);
-
-    if ($inputDateTime === false) {
-        $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    }
-
-    $currentDate = new DateTime();
-    $threeMonthsLater = clone $currentDate;
-    $threeMonthsLater->modify('+3 months');
-
-    if ($inputDateTime > $threeMonthsLater) {
-        majStocks();
-        header("Location: index.php");
-        exit();
-    } else {
-        header("Location: panier.php");
-        exit();
-    }
-}
-
-function majStocks()
-{
-    if (empty($_SESSION['panier'])) {
-        throw new Exception("Le panier est vide.");
-    }
-
-    $conn = connectionBD();
-    mysqli_set_charset($conn, "utf8mb4");
-
-    if ($conn->connect_error) {
-        throw new Exception("Erreur de connexion à la base de données : " . $conn->connect_error);
-    }
-
-    try {
-        $conn->begin_transaction(); // Démarrer une transaction pour assurer que toutes les mises à jour se fassent ou aucune.
-
-        foreach ($_SESSION['panier'] as $article) {
-            $articleId = isset($article[0]) ? (int)$article[0] : 0;
-            $quantite = isset($article[1]) ? (int)$article[1] : 0;
-
-            // Vérifie que l'ID de l'article et la quantité sont valides
-            if ($articleId > 0 && $quantite > 0) {
-                $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ii", $quantite, $articleId);
-
-                if (!$stmt->execute()) {
-                    throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
-                }
-
-                $stmt->close(); // Fermer le statement après chaque exécution
-            } else {
-                throw new Exception("Le format du panier est invalide pour l'article avec ID " . htmlspecialchars($articleId));
-            }
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
+        $inputDate = $_POST['validity'];
+        $inputDateTime = DateTime::createFromFormat('m/y', $inputDate);
+        
+        if ($inputDateTime === false) {
+            $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
         }
-
-        $conn->commit(); // Valider la transaction si tout se passe bien
-
-        // Vider le panier après la mise à jour des stocks
-        unset($_SESSION['panier']);
-
-    } catch (Exception $e) {
-        $conn->rollback(); // Annuler la transaction en cas d'erreur
-        throw $e; // Relancer l'exception pour la gérer ailleurs si nécessaire
-    } finally {
-        $conn->close(); // Fermer la connexion
+        
+        $currentDate = new DateTime();
+        $threeMonthsLater = clone $currentDate;
+        $threeMonthsLater->modify('+3 months');
+        
+        if ($inputDateTime < $threeMonthsLater) {
+            majStocks();
+            header("Location: index.php");
+            exit();
+        } else {
+            header("Location: panier.php");
+            exit();
+        }
     }
-}
 
-
-
+    function majStocks() {
+        if (empty($_SESSION['panier'])) {
+            throw new Exception("Le panier est vide.");
+        }
+    
+        $conn = connectionBD();
+        mysqli_set_charset($conn, "utf8mb4");
+        
+        if ($conn->connect_error) {
+            throw new Exception("Erreur de connexion à la base de données : " . $conn->connect_error);
+        }
+        
+        try {
+            $conn->begin_transaction();
+            
+            foreach ($_SESSION['panier'] as $article) {
+                // Vérifier que l'élément a un ID d'article et une quantité valide
+                if (isset($article['id']) && isset($article['quantite'])) {
+                    // Convertir l'ID de l'article et la quantité en entiers
+                    $articleId = (int)$article['id'];
+                    $quantite = (int)$article['quantite'];
+    
+                    if ($articleId > 0 && $quantite > 0) {
+                        $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("ii", $quantite, $articleId);
+                        
+                        if (!$stmt->execute()) {
+                            throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
+                        }
+    
+                        $stmt->close();
+                    } else {
+                        throw new Exception("L'ID de l'article ou la quantité est invalide après conversion en entier.");
+                    }
+                } else {
+                    throw new Exception("Le format du panier est invalide pour l'article.");
+                }
+            }
+            
+            $conn->commit();
+            // Vider le panier après la mise à jour réussie des stocks
+            $_SESSION['panier'] = []; 
+        } catch (Exception $e) {
+            $conn->rollback();
+            throw $e;
+        } finally {
+            $conn->close();
+        }
+    }
+    
 ?>
 
 <!DOCTYPE html>
@@ -90,7 +90,7 @@ function majStocks()
 </head>
 
 <body>
-    <?php genererNav(); ?>
+    <?php genererNav(); ?>  
 
     <div class="d-flex flex-column min-vh-100"> <!-- Conteneur principal -->
         <main class="flex-grow-1">
@@ -110,7 +110,7 @@ function majStocks()
                     </div>
                     <div class="col-md-6">
                         <label for="inputCity" class="form-label">Numero de la carte</label>
-                        <input type="text" class="form-control" id="inputCity" maxlength="16" placeholder="Ex : 1111222233334444" pattern="^(?P<first_char>.)(?:(?!\1).)*\1$">
+                        <input type="text" class="form-control" id="inputCity" maxlength="16" placeholder="Ex : 1111222233334444">
                     </div>
                     <div class="col-md-2">
                         <label for="inputZip" class="form-label">Cryptogramme</label>
@@ -118,7 +118,7 @@ function majStocks()
                     </div>
                     <div class="col-md-2">
                         <label for="validity" class="form-label">Date de validité</label>
-                        <input type="text" class="form-control" name="validity" id="validity" pattern="(0[1-9]|1[0-2])/\d{2}" placeholder="Ex : 01/26">
+                        <input type="month" class="form-control" name="validity" id="validity" pattern="(0[1-9]|1[0-2])/\d{2}" placeholder="Ex : 01/26">
                     </div>
                     <div class="col-12">
                         <button type="submit" maxlength="5" class="btn btn-primary">Enregistrer le paiement</button>
@@ -128,5 +128,4 @@ function majStocks()
         </main>
         <?php genererFooter(); ?>
     </div>
-    
 </body>

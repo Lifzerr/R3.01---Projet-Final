@@ -98,7 +98,7 @@
                                     <th scope="row" class="d-none align-middle"><?= htmlspecialchars($article['id']) ?></th>
                                     <td class="align-middle"><?= htmlspecialchars($article['titre']) ?></td>
                                     <td class="align-middle"><?= htmlspecialchars($article['description']) ?></td>
-                                    <td class="align-middle" id="prix">
+                                    <td class="align-middle prix" >
                                         <?php
                                             // Afficher le prix total en fonction de la quantité
                                             echo htmlspecialchars($article['prix']) * $quantite;
