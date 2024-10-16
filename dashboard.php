@@ -122,7 +122,7 @@ require_once('fonctions.php');
                                 // //Modifier la categorie de l'article
                                 $sql = "UPDATE Article 
                                 LEFT JOIN Categorie ON Article.categorieId = Categorie.id
-                                SET Article.categorieId = (SELECT id FROM Categorie WHERE nom = ?) WHERE Article.id = ?;";
+                                SET Article.categorieId = ? WHERE Article.id = ?;";
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param("si", $categorie, $articleId);
                                 $resultat = $stmt->execute();
@@ -130,7 +130,7 @@ require_once('fonctions.php');
 
                                 // Insertion de l'image dans la BD
                                 $chemin = "images/";
-                                $cheminImage = $chemin . $titre;
+                                $cheminImage = $chemin . $titre . ".jpg";
                                 $sql = "UPDATE Image 
                                 LEFT JOIN Article ON Article.imageId = Image.id
                                 SET chemin = ?, alt = ? WHERE Article.id = ?";
@@ -187,7 +187,11 @@ require_once('fonctions.php');
                                                         <div class="form-group">
                                                             <label for="categorie">Catégorie</label>
                                                             <select class="form-control" id="categorie" name="categorie" required>
-                                                                <option value="" disabled>Sélectionnez une catégorie</option>
+                                                                <option value=""> <!-- A MODIFIER PLUS TARD -->
+                                                                    <?php
+                                                                    echo $article['categorie'];
+                                                                    ?>
+                                                                </option>
                                                                 <?php
                                                                 $sql = "SELECT * FROM Categorie;";
                                                                 $result = $conn->query($sql);
