@@ -99,11 +99,10 @@ require_once('fonctions.php');
                                 LEFT JOIN Image ON Article.imageId = Image.id
                                 LEFT JOIN Categorie ON Article.categorieId = Categorie.id
                                 WHERE Article.id = ?;";
-                                $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("i", $articleId);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $stmt->close();
+                                $stmtPrinc = $conn->prepare($sql);
+                                $stmtPrinc->bind_param("i", $articleId);
+                                $stmtPrinc->execute();
+                                $result = $stmtPrinc->get_result();
 
                                 //Modifier les parametres de l'article
                                 $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ? WHERE id = ?";
@@ -121,17 +120,24 @@ require_once('fonctions.php');
                                 // $stmt->close();
 
                                 // //Modifier la categorie de l'article
-                                // $sql = "UPDATE Article SET categorieId = ? WHERE id = ?";
-                                // $stmt = $conn->prepare($sql);
-                                // $stmt->bind_param("ii", $resultCat, $articleId);
-                                // $resultat = $stmt->execute();
-                                // $stmt->close();
+                                $sql = "UPDATE Article 
+                                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
+                                SET Article.categorieId = (SELECT id FROM Categorie WHERE nom = ?) WHERE Article.id = ?;";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param("si", $categorie, $articleId);
+                                $resultat = $stmt->execute();
+                                $stmt->close();
 
                                 // Insertion de l'image dans la BD
-                                // $cheminImage = "images/";
-                                // $nomImage = $image['name'];
-                                // $cheminImage = $chemin . $nomImage;
-                                // $sqlImage = "INSERT INTO Image (id, chemin, alt) VALUES ('$idImage', '$cheminImage', '$alt')";
+                                $chemin = "images/";
+                                $cheminImage = $chemin . $titre;
+                                $sql = "UPDATE Image 
+                                LEFT JOIN Article ON Article.imageId = Image.id
+                                SET chemin = ?, alt = ? WHERE Article.id = ?";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param("ssi", $cheminImage, $alt, $articleId);
+                                $result = $stmt->execute();
+                                $stmt->close();
 
                                 header('location: dashboard.php');
                             }
