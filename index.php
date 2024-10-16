@@ -52,7 +52,7 @@ require_once('fonctions.php');
         <div class="row">
             <?php foreach ($result as $article) { ?>
                 <div class="col-md-4 mb-4">
-                    <div class="card" style="width: 18rem; min-height: 250px;">
+                    <a class="card text-decoration-none" style="width: 18rem; min-height: 250px;" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">
                         <img src="<?= redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200); ?>" class="card-img-top" alt="<?= $article['alt'] ?>">
                         <div class="card-body">
                             <h5 class="card-title"><?= $article['titre'] ?></h5>
@@ -69,7 +69,7 @@ require_once('fonctions.php');
                         <div class="card-footer">
                             Prix : <?= $article['prix']*1 ?>€
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="modal fade" id="fenetreModale-<?= $article['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
