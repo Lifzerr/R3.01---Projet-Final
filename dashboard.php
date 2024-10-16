@@ -104,6 +104,12 @@ require_once('fonctions.php');
                                 $stmtPrinc->execute();
                                 $result = $stmtPrinc->get_result();
 
+                                if ($row = $result->fetch_assoc()) {
+                                    // Récupérer les valeurs des colonnes
+                                    $articleTitre = $row['titre'];
+                                    $ancienChemin = "images/" . $articleTitre . ".jpg";
+                                }
+
                                 //Modifier les parametres de l'article
                                 $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ? WHERE id = ?";
                                 $stmt = $conn->prepare($sql);
@@ -131,6 +137,7 @@ require_once('fonctions.php');
                                 // Insertion de l'image dans la BD
                                 $chemin = "images/";
                                 $cheminImage = $chemin . $titre . ".jpg";
+                                rename($ancienChemin, $cheminImage);
                                 $sql = "UPDATE Image 
                                 LEFT JOIN Article ON Article.imageId = Image.id
                                 SET chemin = ?, alt = ? WHERE Article.id = ?";
@@ -138,10 +145,8 @@ require_once('fonctions.php');
                                 $stmt->bind_param("ssi", $cheminImage, $alt, $articleId);
                                 $result = $stmt->execute();
                                 $stmt->close();
-
                                 header('location: dashboard.php');
                             }
-
                             ?>
 
                             <?php
