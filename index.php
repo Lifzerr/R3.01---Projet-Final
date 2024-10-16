@@ -113,16 +113,6 @@ require_once('fonctions.php');
 
     <?php
 
-    // trouve l'index de l'article dans le panier
-    function trouverIndexDesArticles($panier, $article_id)
-    {
-        foreach ($panier as $index => $item) {
-            if ($item[0] == $article_id) {
-                return $index;
-            }
-        }
-        return false;
-    }
 
     // Initialise le panier s'il n'existe pas
     if (!isset($_SESSION['panier'])) {
@@ -134,7 +124,7 @@ require_once('fonctions.php');
 
     // Vérifie que l'ID de l'article est valide
     if ($article_id > 0) {
-        // Trouve l'index de l'article dans le panier
+        // Trouve l'index de l'articl   e dans le panier
         $article_index = trouverIndexDesArticles($_SESSION['panier'], $article_id);
 
         if ($article_index !== false) {

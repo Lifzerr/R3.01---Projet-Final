@@ -147,3 +147,15 @@ function genererFooter() {
     </div>
     </footer>';
 }
+
+
+// Fonction de recherche de l'index de l'article 
+function trouverIndexDesArticles($panier, $article_id)
+{
+    foreach ($panier as $index => $item) {
+        if ($item[0] == $article_id) {
+            return $index;
+        }
+    }
+    return false;
+}
