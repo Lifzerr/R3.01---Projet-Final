@@ -1,6 +1,20 @@
 <?php
     require_once('fonctions.php'); 
     session_start();
+
+    function getMax(int $idArticle){
+        $conn = connectionBD();
+        mysqli_set_charset($conn, "utf8mb4");
+
+        $sql = "SELECT quantiteDispo FROM Article WHERE id = ?";
+        $requete = $conn->prepare($sql);
+        $requete->bind_param("i", $idArticle);
+        $requete->execute();
+        $result = $requete->get_result();
+        $nbDispo = $result->fetch_assoc()['quantiteDispo'];
+
+        return $nbDispo;
+    }
     ?>
 
 <!DOCTYPE html>
@@ -13,7 +27,6 @@
 </head>
 <body>
     <?php genererNav(); ?>
-    <?php var_dump($_SESSION['panier']); ?>
     <div class="d-flex flex-column min-vh-100"> <!-- Conteneur principal -->
         <main class="flex-grow-1">
             <div class="container mt-5">
@@ -91,9 +104,7 @@
                                         ?>
                                     </td>
                                     <td>
-                                        <?php
-                                            echo "<input type='number' value='$quantite' min='1' max='10' class='form-control' style='width: 70px;' onchange='updateQuantity(" . $article["id"] . ", this.value)'>";
-                                        ?>
+                                        <input type='number' data-article-id='<?= htmlspecialchars($article["id"]) ?>' value='<?= $quantite ?>' min='0' max='<?= getmax($article["id"])?>' class='form-control' style='width: 70px;'>       
                                     </td>
                                 </tr>
                                 <?php 
