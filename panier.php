@@ -27,8 +27,7 @@
 </head>
 <body>
     <?php genererNav(); ?>
-    <?php var_dump($_SESSION['panier']); ?>
-    <div class="d-flex flex-column min-vh-100"> <!-- Conteneur principal -->
+    <div class="d-flex flex-column min-vh-100"> 
         <main class="flex-grow-1">
             <div class="container mt-5">
                 <div id="main" class="card card-body">
@@ -77,7 +76,7 @@
                         $quantite = (int) $articleInfo[1]; // La seconde est la quantité
 
                         // Vérifier que l'ID et la quantité sont valides
-                        if ($articleId > 0 && $quantite > 0) {
+                        if ($articleId > 0 && $quantite >= 0) {
                             // Requête pour récupérer les détails de l'article
                             $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
                                     FROM Article
