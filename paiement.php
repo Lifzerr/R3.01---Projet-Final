@@ -26,54 +26,44 @@
         }
     }
 
-    function majStocks() {
+    function majStocks()
+    {
         if (empty($_SESSION['panier'])) {
             throw new Exception("Le panier est vide.");
         }
-    
         $conn = connectionBD();
         mysqli_set_charset($conn, "utf8mb4");
-        
         if ($conn->connect_error) {
             throw new Exception("Erreur de connexion à la base de données : " . $conn->connect_error);
         }
-        
         try {
-            $conn->begin_transaction();
-            
+            $conn->begin_transaction(); // Démarrer une transaction pour assurer que toutes les mises à jour se fassent ou aucune.
             foreach ($_SESSION['panier'] as $article) {
-                // Vérifier que l'élément a un ID d'article et une quantité valide
-                if (isset($article['id']) && isset($article['quantite'])) {
-                    // Convertir l'ID de l'article et la quantité en entiers
-                    $articleId = (int)$article['id'];
-                    $quantite = (int)$article['quantite'];
-    
-                    if ($articleId > 0 && $quantite > 0) {
-                        $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("ii", $quantite, $articleId);
-                        
-                        if (!$stmt->execute()) {
-                            throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
-                        }
-    
-                        $stmt->close();
-                    } else {
-                        throw new Exception("L'ID de l'article ou la quantité est invalide après conversion en entier.");
+                $articleId = isset($article[0]) ? (int)$article[0] : 0;
+                $quantite = isset($article[1]) ? (int)$article[1] : 0;
+                // Vérifie que l'ID de l'article et la quantité sont valides
+                if ($articleId > 0 && $quantite > 0) {
+                    $sql = "UPDATE Article SET quantiteDispo = GREATEST(0, quantiteDispo - ?) WHERE id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ii", $quantite, $articleId);
+                    if (!$stmt->execute()) {
+                        throw new Exception("Erreur lors de la mise à jour du stock pour l'article ID " . $articleId);
                     }
+                    $stmt->close(); // Fermer le statement après chaque exécution
                 } else {
-                    throw new Exception("Le format du panier est invalide pour l'article.");
+                    throw new Exception("Le format du panier est invalide pour l'article avec ID " . htmlspecialchars($articleId));
                 }
+        
+        
             }
-            
-            $conn->commit();
-            // Vider le panier après la mise à jour réussie des stocks
-            $_SESSION['panier'] = []; 
+            $conn->commit(); // Valider la transaction si tout se passe bien
+            // Vider le panier après la mise à jour des stocks
+            unset($_SESSION['panier']);
         } catch (Exception $e) {
-            $conn->rollback();
-            throw $e;
+            $conn->rollback(); // Annuler la transaction en cas d'erreur
+            throw $e; // Relancer l'exception pour la gérer ailleurs si nécessaire
         } finally {
-            $conn->close();
+            $conn->close(); // Fermer la connexion
         }
     }
     
