@@ -34,7 +34,7 @@ require_once('fonctions.php');
         }
 
         // Exécuter la requête
-        $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
+        $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.quantiteDispo, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
             FROM Article
             LEFT JOIN Image ON Article.imageId = Image.id
             LEFT JOIN Categorie ON Article.categorieId = Categorie.id;
@@ -89,7 +89,7 @@ require_once('fonctions.php');
                                     <img src="<?= htmlspecialchars($article['chemin']) ?>" alt="<?= htmlspecialchars($article['alt']) ?>" class="img-fluid mb-3" style="max-height: 300px;"> <!-- Image responsive -->
                                 </div>
                                 <!-- <p><strong>ID:</strong> <?= htmlspecialchars($article['id']) ?></p> -->
-                                <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($article['description'])) ?></p>
+                                <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($article['descriptionLongue'])) ?></p>
                                 <p><strong>Prix:</strong> <?= htmlspecialchars($article['prix']*1) ?> €</p>
                                 <p><strong>Quantité disponible:</strong> <?= htmlspecialchars($article['quantiteDispo']) ?></p>
                             </div>

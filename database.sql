@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `image` (
 --
 
 INSERT INTO `image` (`id`, `chemin`, `alt`) VALUES
-(1, 'images/Casque M1', 'Casque M1FF'),
+(1, 'images/Casque M1.jpg', 'Casque M1'),
 (2, 'images/Enigma.jpg', 'Machine Enigma'),
 (3, 'images/Panzer IV.jpg', 'Char Panzer IV'),
 (4, 'images/Grenade Manche.jpg', 'Grenade Manche'),
