@@ -15,7 +15,17 @@
 
         return $nbDispo;
     }
-    ?>
+
+    // Vérifier si une requête POST a été faite pour vider le panier
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'vider_panier') {
+        // Vider le panier
+        unset($_SESSION['panier']);
+
+        // Réponse à envoyer au client
+        echo "Panier vidé";
+        exit;
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,30 +37,30 @@
 </head>
 <body>
     <?php genererNav(); ?>
-    <?php var_dump($_SESSION['panier']); ?>
     <div class="d-flex flex-column min-vh-100"> <!-- Conteneur principal -->
         <main class="flex-grow-1">
             <div class="container mt-5">
                 <div id="main" class="card card-body">
                     <div class="card-header d-flex justify-content-between">
                         <h2 class="title d-md-inline-flex">Votre Panier</h2>
-                        <?php 
-                            // Désactiver le bouton de paiement si le panier est vide
-                            if (empty($_SESSION['panier'])) {
-                                echo "<button type='button' disabled class='btn btn-primary d-md-inline-flex mb-2'>Payer</button>";
+                        <div class="d-flex justify-content-around">
+                            <?php 
+                            // Désactiver le bouton de paiement si le panier est vide ou non défini
+                            if (!isset($_SESSION['panier']) || empty($_SESSION['panier'])) {
+                                echo "<button type='button' disabled class='btn btn-danger d-md-inline-flex mb-2 mx-2'>Vider le panier</button>";
+                                echo "<button type='button' disabled class='btn btn-primary d-md-inline-flex mb-2 mx-2'>Payer</button>";
                             } else {
+                                echo "<button type='button' class='btn btn-danger d-md-inline-flex mb-2 mx-2' onclick=\"viderPanier()\">Vider le panier</button>";
                                 echo "<button type='button' class='btn btn-primary d-md-inline-flex mb-2' onclick=\"window.location.href='paiement.php'\">Payer</button>";
                             }
-                        ?>
+                        ?></div>
                     </div>
                     
                     <?php 
-                    // Vérifier si le panier est vide
-                    if (empty($_SESSION['panier'])) {
+                    // Vérifier si le panier est vide ou non défini
+                    if (!isset($_SESSION['panier']) || empty($_SESSION['panier'])) {
                         echo "<p>Votre panier est vide !</p>";
                     } else { ?>
-
-                    
                         <table class="table">
                         <thead>
                             <tr>
@@ -98,14 +108,15 @@
                                     <th scope="row" class="d-none align-middle"><?= htmlspecialchars($article['id']) ?></th>
                                     <td class="align-middle"><?= htmlspecialchars($article['titre']) ?></td>
                                     <td class="align-middle"><?= htmlspecialchars($article['description']) ?></td>
-                                    <td class="align-middle prix" >
+                                    <td class="align-middle prix">
                                         <?php
                                             // Afficher le prix total en fonction de la quantité
                                             echo htmlspecialchars($article['prix']) * $quantite;
                                         ?>
                                     </td>
                                     <td>
-                                        <input type='number' data-article-id='<?= htmlspecialchars($article["id"]) ?>' value='<?= $quantite ?>' min='0' max='<?= getmax($article["id"])?>' class='form-control' style='width: 70px;'>       
+                                    <input type='number' data-article-id='<?= htmlspecialchars($article["id"]) ?>' value='<?= $quantite ?>' min='0' max='<?= getMax($article["id"]) ?>' class='form-control' style='width: 70px;'>
+       
                                     </td>
                                 </tr>
                                 <?php 
@@ -125,6 +136,39 @@
                     </tbody>
                     </table>    
                     <?php } // Fin de la vérification du panier ?>
+                
+                    <?php
+                    $totalPanier = 0; // Initialiser le total du panier
+                    $conn = connectionBd();
+
+                    // Vérifier si le panier n'est pas vide
+                    if (!empty($_SESSION['panier'])) {
+                        foreach ($_SESSION['panier'] as $key => $articleInfo) {
+                            $articleId = (int)$articleInfo[0];
+                            $quantite = (int)$articleInfo[1];
+
+                            // Requête pour récupérer le prix de l'article
+                            $sql = "SELECT prix FROM Article WHERE id = ?";
+                            $requete = $conn->prepare($sql);
+                            $requete->bind_param("i", $articleId);
+                            $requete->execute();
+                            $result = $requete->get_result();
+
+                            // Vérifier si l'article a été trouvé
+                            if ($result && $result->num_rows > 0) {
+                                $article = $result->fetch_assoc();
+                                $prixArticle = (float)$article['prix'];
+
+                                // Ajouter le prix total de cet article (quantité * prix) au total du panier
+                                $totalPanier += $prixArticle * $quantite;
+                            }
+                        }
+                    }
+                    ?>
+
+                    <div id="total-panier-container" style="text-align: right; margin-top: 20px;">
+                        <strong>Total du panier : </strong><span id="totalPanier"><?= number_format($totalPanier, 2, ',', ' ') ?></span> €
+                    </div>
                 </div>
             </div>
         </main>
