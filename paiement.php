@@ -2,21 +2,42 @@
     require_once('fonctions.php');
     session_start();
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity'])) {
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity']) && isset($_POST['cardNumber'])) {
+
+        $numCarte = $_POST['cardNumber'];
+        if(!($numCarte[0] == $numCarte[strlen($numCarte) - 1]) && $numCarte){
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+    
         $inputDate = $_POST['validity'];
-        $inputDateTime = DateTime::createFromFormat('m/y', $inputDate);
-        
+        $inputParts = explode('/', $inputDate);
+    
+        if (count($inputParts) !== 2 || strlen($inputParts[1]) !== 2) {
+            $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
+    
+        // Ajouter '20' devant l'année pour obtenir une année complète (ex: '24' devient '2024')
+        $month = $inputParts[0];
+        $year = '20' . $inputParts[1];
+    
+        $inputDateTime = DateTime::createFromFormat('Y-m', $year . '-' . $month);
+    
         if ($inputDateTime === false) {
             $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
         }
-        
+    
         $currentDate = new DateTime();
         $threeMonthsLater = clone $currentDate;
         $threeMonthsLater->modify('+3 months');
-        
-        if ($inputDateTime < $threeMonthsLater) {
+    
+        // Comparer uniquement le mois et l'année, ignorer le jour
+        if ($inputDateTime > $threeMonthsLater) {
             majStocks();
             header("Location: index.php");
             exit();
@@ -88,27 +109,27 @@
                 <form class="row g-3" id="formDePaiement" method="post" action="paiement.php">
                     <div class="col-md-6">
                         <label for="inputEmail4" class="form-label">Nom</label>
-                        <input type="text" class="form-control" id="inputEmail4" placeholder="Ex : Marrot">
+                        <input type="text" class="form-control" id="inputEmail4" placeholder="Ex : Marrot" required>
                     </div>
                     <div class="col-md-6">
                         <label for="inputPassword4" class="form-label">Prenom</label>
-                        <input type="text" class="form-control" id="inputPassword4" placeholder="Ex : Jean">
+                        <input type="text" class="form-control" id="inputPassword4" placeholder="Ex : Jean" required>
                     </div>
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Adresse</label>
-                        <input type="text" class="form-control" id="inputAddress" placeholder="Ex : 15 rue de la Liberté">
+                        <input type="text" class="form-control" id="inputAddress" placeholder="Ex : 15 rue de la Liberté" required>
                     </div>
                     <div class="col-md-6">
                         <label for="inputCity" class="form-label">Numero de la carte</label>
-                        <input type="text" class="form-control" id="inputCity" maxlength="16" placeholder="Ex : 1111222233334444">
+                        <input type="text" class="form-control" id="inputCity" maxlength="16" placeholder="Ex : 1111222233334441" name="cardNumber" required>
                     </div>
                     <div class="col-md-2">
                         <label for="inputZip" class="form-label">Cryptogramme</label>
-                        <input type="text" class="form-control" id="inputZip" maxlength="3" placeholder="Ex : 999">
+                        <input type="text" class="form-control" id="inputZip" maxlength="3" placeholder="Ex : 999" required>
                     </div>
                     <div class="col-md-2">
                         <label for="validity" class="form-label">Date de validité</label>
-                        <input type="month" class="form-control" name="validity" id="validity" pattern="(0[1-9]|1[0-2])/\d{2}" placeholder="Ex : 01/26">
+                        <input type="month" class="form-control" name="validity" id="validity" pattern="(0[1-9]|1[0-2])/\d{2}" placeholder="Ex : 01/26" required>
                     </div>
                     <div class="col-12">
                         <button type="submit" maxlength="5" class="btn btn-primary">Enregistrer le paiement</button>
