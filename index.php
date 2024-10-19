@@ -52,14 +52,14 @@ require_once('fonctions.php');
         <div class="row">
             <?php foreach ($result as $article) { ?>
                 <div class="col-md-4 mb-4">
-                    <div class="card text-decoration-none" style="width: 18rem; min-height: 250px;">
+                    <div class="card text-decoration-none" style="width: 18rem; min-height: 250px; height: 100%; display: flex; flex-direction: column;">
                         <a>
-                            <img src="<?= redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200); ?>"  alt="<?= $article['alt'] ?>" class="card-img-top p-2 rounded-top" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">
+                            <img src="<?= redimage($article['chemin'], 'vignettes/' . $article['titre'], 200, 200); ?>" alt="<?= $article['alt'] ?>" class="card-img-top p-2 rounded-top" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">
                         </a>
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column justify-content-between" style="flex-grow: 1;">
                             <h5 class="card-title"><?= $article['titre'] ?></h5>
                             <p class="card-text"><?= $article['description'] ?></p>
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between ">
                                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#fenetreModale-<?= $article['id'] ?>">Details</button>
                                 <form method="post" action="index.php" class="d-md-inline-flex">
                                     <?php if ($article['quantiteDispo'] == 0) { ?>
@@ -72,36 +72,40 @@ require_once('fonctions.php');
 
                         </div>
                         <div class="card-footer">
-                            Prix : <?= $article['prix']*1 ?>€
+                            Prix : <?= $article['prix'] * 1 ?>€
                         </div>
                     </div>
                 </div>
 
+
                 <div class="modal fade" id="fenetreModale-<?= $article['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
+                        <div class="modal-content shadow-lg">
+                            <div class="modal-header" style="background-color: #007bff; color: white;">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel"><?= htmlspecialchars($article['titre']) ?></h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
-                                <div class="text-center"> 
+                            <div class="modal-body d-flex">
+                                <div class="text-center me-3"> 
                                     <img src="<?= htmlspecialchars($article['chemin']) ?>" alt="<?= htmlspecialchars($article['alt']) ?>" class="img-fluid mb-3" style="max-height: 300px;"> <!-- Image responsive -->
                                 </div>
-                                <!-- <p><strong>ID:</strong> <?= htmlspecialchars($article['id']) ?></p> -->
-                                <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($article['descriptionLongue'])) ?></p>
-                                <p><strong>Prix:</strong> <?= htmlspecialchars($article['prix']*1) ?> €</p>
-                                <p><strong>Quantité disponible:</strong> <?= htmlspecialchars($article['quantiteDispo']) ?></p>
+                                <div>
+                                    <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($article['descriptionLongue'])) ?></p>
+                                    <p class="mt-3"><strong>Prix:</strong> <?= htmlspecialchars($article['prix'] * 1) ?> €</p>
+                                    <p><strong>Quantité disponible:</strong> <?= htmlspecialchars($article['quantiteDispo']) ?></p>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <form method="post" action="index.php">
-                                    <button type="submit" class="btn btn-secondary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
+                                    <button type="submit" class="btn btn-primary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
                                 </form>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
 
             <?php
             }
