@@ -7,7 +7,84 @@
 
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
-}
+    }
+
+    if (
+        isset($_POST['titre']) &&
+        isset($_POST['descriptionCourte']) &&
+        isset($_POST['descriptionLongue']) &&
+        isset($_POST['prix']) &&
+        isset($_POST['quantiteDispo']) &&
+        isset($_POST['categorie']) &&
+        isset($_POST['alt']) &&
+        isset($_FILES['image'])
+    ) {
+        
+        $titre = $_POST['titre'];
+        $descriptionCourte = $_POST['descriptionCourte'];
+        $descriptionLongue = $_POST['descriptionLongue'];
+        $prix = $_POST['prix'];
+        $quantiteDispo = $_POST['quantiteDispo'];
+        $categorie = $_POST['categorie'];
+        $alt = $_POST['alt'];
+        $image = $_FILES['image'];
+
+        // Récupération de l'id pour insérer l'image
+        $sqlIdImage = "SELECT MAX(id) FROM Image";
+        $resultat = $conn->query($sqlIdImage);
+        if ($resultat) {
+            $row = $resultat->fetch_assoc();
+            $idImage = $row['MAX(id)'] + 1;
+        } else {
+            die("Erreur lors de la récupération de l'id de l'image : " . $conn->error);
+        }
+
+        $target_dir = "images/";
+        $target_file = $target_dir . basename($_FILES["image"]["name"]);
+
+        // Vérifier si le fichier est une image réelle
+        $check = getimagesize($_FILES["image"]["tmp_name"]);
+        if ($check !== false) {
+            if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                echo "L'image " . htmlspecialchars(basename($_FILES["image"]["name"])) . " a été uploadée.";
+            } else {
+                die("Erreur lors de l'upload de l'image.");
+            }
+        } else {
+            die("Le fichier n'est pas une image.");
+        }
+
+
+        // Insertion de l'image dans la BD
+        $chemin = "images/";
+        $nomImage = $image['name'];
+        $cheminImage = $chemin . $nomImage;
+
+        $sqlImage = "INSERT INTO Image (id, chemin, alt) VALUES ('$idImage', '$cheminImage', '$alt')";
+
+        if ($conn->query($sqlImage) === TRUE) {
+            echo "Image ajoutée avec succès !";
+        } else {
+            die("Erreur lors de l'ajout de l'image : " . $conn->error);
+        }
+
+        // Ajout de l'article dans la BD
+        $sql = "INSERT INTO Article (titre, description, descriptionLongue, prix, quantiteDispo, categorieId, imageId) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssdiii", $titre, $descriptionCourte, $descriptionLongue, $prix, $quantiteDispo, $categorie, $idImage);
+
+        if ($stmt->execute()) {
+            echo "Nouvel article ajouté avec succès !";
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            die("Erreur : " . $stmt->error);
+        }
+    } 
+
+
 ?>
 
 <!DOCTYPE html>
@@ -29,8 +106,12 @@
                 <input type="text" class="form-control" id="titre" name="titre" placeholder="Titre du matériel" required>
             </div>
             <div class="form-group">
-                <label for="description">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description du matériel" required></textarea>
+                <label for="description">Description courte</label>
+                <textarea class="form-control" id="descriptionCourte" name="descriptionCourte" rows="3" placeholder="Description courte du matériel" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="description">Description longue</label>
+                <textarea class="form-control" id="descriptionLongue" name="descriptionLongue" rows="5" placeholder="Description du matériel" required></textarea>
             </div>
             <div class="form-group">
                 <label for="prix">Prix (€)</label>
@@ -73,83 +154,6 @@
         </form>
     </div>
 
-    <?php
-            if (
-                isset($_POST['titre']) &&
-                isset($_POST['description']) &&
-                isset($_POST['prix']) &&
-                isset($_POST['quantiteDispo']) &&
-                isset($_POST['categorie']) &&
-                isset($_POST['alt']) &&
-                isset($_FILES['image'])
-            ) {
-                
-                $titre = $_POST['titre'];
-                $description = $_POST['description'];
-                $prix = $_POST['prix'];
-                $quantiteDispo = $_POST['quantiteDispo'];
-                $categorie = $_POST['categorie'];
-                $alt = $_POST['alt'];
-                $image = $_FILES['image'];
-
-                // Récupération de l'id pour insérer l'image
-                $sqlIdImage = "SELECT MAX(id) FROM Image";
-                $resultat = $conn->query($sqlIdImage);
-                if ($resultat) {
-                    $row = $resultat->fetch_assoc();
-                    $idImage = $row['MAX(id)'] + 1;
-                } else {
-                    die("Erreur lors de la récupération de l'id de l'image : " . $conn->error);
-                }
-
-                $target_dir = "images/";
-                $target_file = $target_dir . basename($_FILES["image"]["name"]);
-
-                // Vérifier si le fichier est une image réelle
-                $check = getimagesize($_FILES["image"]["tmp_name"]);
-                if ($check !== false) {
-                    if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                        echo "L'image " . htmlspecialchars(basename($_FILES["image"]["name"])) . " a été uploadée.";
-                    } else {
-                        die("Erreur lors de l'upload de l'image.");
-                    }
-                } else {
-                    die("Le fichier n'est pas une image.");
-                }
-
-
-                // Insertion de l'image dans la BD
-                $chemin = "images/";
-                $nomImage = $image['name'];
-                $cheminImage = $chemin . $nomImage;
-
-                $sqlImage = "INSERT INTO Image (id, chemin, alt) VALUES ('$idImage', '$cheminImage', '$alt')";
-
-                if ($conn->query($sqlImage) === TRUE) {
-                    echo "Image ajoutée avec succès !";
-                } else {
-                    die("Erreur lors de l'ajout de l'image : " . $conn->error);
-                }
-
-                // Ajout de l'article dans la BD
-                $sql = "INSERT INTO Article (titre, description, prix, quantiteDispo, categorieId, imageId) 
-                        VALUES (?, ?, ?, ?, ?, ?)";
-
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssdiii", $titre, $description, $prix, $quantiteDispo, $categorie, $idImage);
-
-                $result = $stmt->execute();
-
-                if ($result) {
-                    echo "Nouvel article ajouté avec succès !";
-                    header("Location: dashboard.php"); // Redirection vers le dashboard
-                    exit();
-                } else {
-                    echo "Erreur : " . $conn->error;
-                }
-            } 
-
-    ?>
     <?php genererFooter(); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc5KAIl0S1EICeIm8g7G1p6hsUdeK0N6B/Xm99LHE" crossorigin="anonymous"></script>
