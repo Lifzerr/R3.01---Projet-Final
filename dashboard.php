@@ -59,7 +59,7 @@ require_once('fonctions.php');
                             }
 
                             // Exécuter la requête
-                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
+                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
                             FROM Article
                             LEFT JOIN Image ON Article.imageId = Image.id
                             LEFT JOIN Categorie ON Article.categorieId = Categorie.id; ";
@@ -180,6 +180,10 @@ require_once('fonctions.php');
                                                         <div class="form-group">
                                                             <label for="description">Description</label>
                                                             <textarea class="form-control" id="description" name="description" rows="3" required><?= $article['description'] ?></textarea>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="description">Description Longue</label>
+                                                            <textarea class="form-control" id="description" name="description" rows="5" required><?= $article['descriptionLongue'] ?></textarea>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="prix">Prix (€)</label>
