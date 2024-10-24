@@ -7,6 +7,7 @@
 
         $numCarte = $_POST['cardNumber'];
         if(!($numCarte[0] == $numCarte[strlen($numCarte) - 1]) && $numCarte){
+            $_SESSION['card_error'] = "Le numéro de carte doit avoir la même première et dernière valeur.";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
         }
@@ -42,7 +43,8 @@
             header("Location: index.php");
             exit();
         } else {
-            header("Location: panier.php");
+            $_SESSION['date_error'] = "La date d'expiration ne peut pas être supérieure à 3 mois.";
+            header("Location: " . $_SERVER['PHP_SELF']);
             exit();
         }
     }
@@ -98,6 +100,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site de vente en ligne</title>
     <link rel="stylesheet" href="node_modules\bootstrap\dist\css\bootstrap.css">
+    <script>
+        window.onload = function() {
+            <?php if (isset($_SESSION['date_error'])): ?>
+                alert("<?php echo $_SESSION['date_error']; ?>");
+                <?php unset($_SESSION['date_error']); ?> // Supprimer le message après l'affichage
+            <?php endif; ?>
+            <?php if (isset($_SESSION['card_error'])): ?>
+                alert("<?php echo $_SESSION['card_error']; ?>");
+                <?php unset($_SESSION['card_error']); ?> // Supprimer le message après l'affichage
+            <?php endif; ?>
+        }
+    </script>
 </head>
 
 <body>
