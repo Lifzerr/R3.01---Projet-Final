@@ -1,6 +1,12 @@
 <?php
 
 function redimage($img_src, $img_dest, $dst_w, $dst_h) {
+    
+    if(!file_exists($img_src)){
+        // Retourner une vignette nulle pour que l'alt s'affiche
+        return null;
+    }
+
     // Lit les dimensions de l'image
     $size = GetImageSize("$img_src");
     $src_w = $size[0]; 
@@ -59,7 +65,7 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
 
 function connectionBD() {
     // Détection de l'environnement
-    $serverAvailable = @fsockopen("lakartxela.iutbayonne.univ-pau.fr", 3306, $errno, $errstr, 1);
+    $serverAvailable = @fsockopen("lakartxela.iutbayonne.univ-pau.fr", 3306, $errno, $errstr, 1); // le @ évite que l'erreur de conexion soit affichée, et permet de connecter aux autres si besoin
 
     if ($serverAvailable) {
         // Connexion au serveur distant
