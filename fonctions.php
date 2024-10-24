@@ -27,7 +27,6 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
             break;
         case 'image/png':
             $src_im = ImageCreateFromPng($img_src);
-            // Préserve la transparence pour les PNG
             imagecolortransparent($dst_im, imagecolorallocatealpha($dst_im, 0, 0, 0, 127));
             imagealphablending($dst_im, false);
             imagesavealpha($dst_im, true);
@@ -63,7 +62,7 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
     return $img_dest;
 }
 
-function connectionBD() {
+function connectionBD(): mysqli {
     // Détection de l'environnement
     $serverAvailable = @fsockopen("lakartxela.iutbayonne.univ-pau.fr", 3306, $errno, $errstr, 1); // le @ évite que l'erreur de conexion soit affichée, et permet de connecter aux autres si besoin
 
@@ -195,24 +194,3 @@ function trouverIndexDesArticles($panier, $article_id)
     return false;
 }
 
-function supprimerFichiersDossier($dossier) {
-    // Vérifier si le dossier existe
-    if (is_dir($dossier)) {
-        // Ouvrir le dossier
-        $fichiers = scandir($dossier);
-
-        // Parcourir chaque fichier dans le dossier
-        foreach ($fichiers as $fichier) {
-            // Ignorer les répertoires spéciaux "." et ".."
-            if ($fichier != '.' && $fichier != '..') {
-                // Chemin complet du fichier
-                $cheminFichier = $dossier . DIRECTORY_SEPARATOR . $fichier;
-
-                // Si c'est un fichier, le supprimer
-                if (is_file($cheminFichier)) {
-                    unlink($cheminFichier);
-                }
-            }
-        }
-    }
-}

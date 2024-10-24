@@ -105,12 +105,22 @@ require_once('fonctions.php');
                         </div>
                     </div>
                 </div>
+                
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                    <div id="toastAjoutPanier" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                Article ajouté au panier !
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
 
 
 
             <?php
             }
-            supprimerFichiersDossier('vignettes');
             $conn->close();
             ?>
 
@@ -144,14 +154,26 @@ require_once('fonctions.php');
 
 
     <?php genererFooter(); ?>
-    <script src="js/script.js"></script>
     <!-- Bootstrap 4.6.2 JS and dependencies (jQuery and Popper.js) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
-    <!-- Bootstrap CSS -->
-    <!-- Bootstrap JS (with Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>  
+        document.addEventListener('DOMContentLoaded', function () {
+            <?php if (isset($_POST['article_id'])) { ?>
+                var toastElement = document.getElementById('toastAjoutPanier');
+                var toast = new bootstrap.Toast(toastElement);
+                toast.show();
+
+                // Cacher le toast après 2 secondes
+                setTimeout(function () {
+                    toast.hide();
+                }, 2000);
+            <?php } ?>
+        });     
+    </script>
+
 
 </body>
 
