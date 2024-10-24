@@ -129,7 +129,7 @@ function genererFooter() {
                         echo '
                                 <li><a href="login.html" class="text-white">Se connecter</a></li>';
                     }
-                    echo '<li><a href="contact.php" class="text-white">Contact</a></li>
+                    echo '<li><a href="index.php" class="text-white">Contact</a></li>
                 </ul>
             </div>
             <div class="col-md-4">
