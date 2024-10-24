@@ -80,8 +80,7 @@ require_once('fonctions.php');
                                 isset($_POST['descriptionLongue']) &&
                                 isset($_POST['prix']) &&
                                 isset($_POST['quantiteDispo']) &&
-                                isset($_POST['alt']) //&&
-                                //isset($_FILES['image'])
+                                isset($_POST['alt'])
                             ) {
                                 $articleId = $_POST['article_id'];
                                 $titre = $_POST['titre'];
@@ -115,23 +114,6 @@ require_once('fonctions.php');
                                 $result = $stmt->execute();
                                 $stmt->close();
 
-                                //Modifier les parametres de la categorie
-                                // $sql = "SELECT id FROM Categorie WHERE nom = ?";
-                                // $stmt = $conn->prepare($sql);
-                                // $stmt->bind_param("s", $categorie);
-                                // $resultCat = $stmt->execute();
-                                // var_dump($resultCat);
-                                // $stmt->close();
-
-                                // //Modifier la categorie de l'article
-                                // $sql = "UPDATE Article 
-                                // LEFT JOIN Categorie ON Article.categorieId = Categorie.id
-                                // SET Article.categorieId = ? WHERE Article.id = ?;";
-                                // $stmt = $conn->prepare($sql);
-                                // $stmt->bind_param("si", $categorie, $articleId);
-                                // $resultat = $stmt->execute();
-                                // $stmt->close();
-
                                 // Insertion de l'image dans la BD
                                 $chemin = "images/";
                                 $cheminImage = $chemin . $titre . ".jpg";
@@ -143,6 +125,11 @@ require_once('fonctions.php');
                                 $stmt->bind_param("ssi", $cheminImage, $alt, $articleId);
                                 $result = $stmt->execute();
                                 $stmt->close();
+                                header('location: dashboard.php');
+                            }
+                            if (isset($_FILES['image'])) {
+                                
+
                                 header('location: dashboard.php');
                             }
                             ?>
