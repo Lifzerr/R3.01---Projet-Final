@@ -114,42 +114,72 @@ require_once('fonctions.php');
                                 $stmt->close();
 
                             }
-                            // Gérer l'image si elle a été changée
                             if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
                                 $image = $_FILES['image'];
                                 $target_dir = "images/";
-
+                            
+                                // Vérification des erreurs d'upload
+                                if ($image['error'] !== UPLOAD_ERR_OK) {
+                                    die("Erreur lors de l'upload de l'image : " . $image['error']);
+                                }
+                            
                                 // Vérifier si le fichier est une image réelle
-                                $check = getimagesize($_FILES["image"]["tmp_name"]);
+                                $check = getimagesize($image["tmp_name"]);
                                 if ($check !== false) {
                                     // Récupérer l'extension du fichier
                                     $extension = pathinfo($image['name'], PATHINFO_EXTENSION);
-
+                                    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                            
+                                    if (!in_array(strtolower($extension), $allowed_extensions)) {
+                                        die("Type de fichier non autorisé. Seules les images JPG, PNG et GIF sont autorisées.");
+                                    }
+                            
+                                    // Supprimer l'ancienne image
+                                    $sql = "SELECT chemin FROM Image WHERE id = (SELECT imageId FROM Article WHERE id = ?)";
+                                    $stmtPrinc = $conn->prepare($sql);
+                                    $stmtPrinc->bind_param("i", $articleId);
+                                    $stmtPrinc->execute();
+                                    $result = $stmtPrinc->get_result();
+                            
+                                    if ($result->num_rows > 0) {
+                                        $imageData = $result->fetch_assoc();
+                                        $ancienneImage = $imageData['chemin'];
+                            
+                                        // Vérifier si l'ancienne image existe et la supprimer
+                                        if (file_exists($ancienneImage)) {
+                                            unlink($ancienneImage);
+                                        }
+                                    }
+                            
                                     // Renommer l'image avec le titre de l'article
                                     $nouveauNomImage = $target_dir . $titre . "." . $extension;
-
+                            
                                     // Déplacer l'image uploadée dans le dossier images
-                                    if (move_uploaded_file($image["tmp_name"], $nouveauNomImage)) {
-                                        echo "L'image " . htmlspecialchars($titre) . " a été uploadée et renommée.";
-
-                                        // Insertion de l'image dans la BD
-                                        $sqlImage = "UPDATE Image 
-                                                    LEFT JOIN Article ON Article.imageId = Image.id 
-                                                    SET chemin = ?, alt = ? WHERE Article.id = ?";
-                                        $stmt = $conn->prepare($sqlImage);
-                                        $stmt->bind_param("ssi", $nouveauNomImage, $alt, $articleId);
-                                        $stmt->execute();
-                                        $stmt->close();
-                                    } else {
-                                        die("Erreur lors de l'upload de l'image.");
+                                    if (!move_uploaded_file($image["tmp_name"], $nouveauNomImage)) {
+                                        die("Erreur lors de l'upload de l'image. Vérifiez les permissions et le chemin.");
                                     }
+                            
+                                    // Insertion de l'image dans la BD
+                                    $sqlImage = "UPDATE Image 
+                                                LEFT JOIN Article ON Article.imageId = Image.id 
+                                                SET chemin = ?, alt = ? WHERE Article.id = ?";
+                                    $stmt = $conn->prepare($sqlImage);
+                                    $stmt->bind_param("ssi", $nouveauNomImage, $alt, $articleId);
+                                    
+                                    if ($stmt->execute() === false) {
+                                        die("Erreur lors de la mise à jour de l'image dans la base de données : " . $stmt->error);
+                                    }
+                            
+                                    $stmt->close();
                                 } else {
                                     die("Le fichier uploadé n'est pas une image valide.");
                                 }
-
+                            
                                 // Redirection après la mise à jour de l'image
                                 header('location: dashboard.php');
+                                exit(); // Toujours ajouter exit après une redirection
                             }
+                            
                             ?>
 
                             <?php
