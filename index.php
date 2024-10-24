@@ -78,21 +78,23 @@ require_once('fonctions.php');
 
                 <div class="modal fade" id="fenetreModale-<?= $article['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
-                        <div class="modal-content shadow-lg">
+                        <div class="modal-content shadow-lg">               
                             <div class="modal-header" style="background-color: #007bff; color: white;">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel"><?= htmlspecialchars($article['titre']) ?></h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body d-flex">
-                                <div class="text-center me-3"> 
-                                    <img src="<?= htmlspecialchars($article['chemin']) ?>" alt="<?= htmlspecialchars($article['alt']) ?>" class="img-fluid mb-3" style="max-height: 300px;"> <!-- Image responsive -->
-                                </div>
+                            <div class="text-center mt-3">
+                                <img src="<?= htmlspecialchars($article['chemin']) ?>" alt="<?= htmlspecialchars($article['alt']) ?>" class="img-fluid mb-3" style="max-height: 300px;"> <!-- Image responsive -->
+                            </div>
+
+                            <div class="modal-body">
                                 <div>
                                     <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($article['descriptionLongue'])) ?></p>
                                     <p class="mt-3"><strong>Prix:</strong> <?= htmlspecialchars($article['prix'] * 1) ?> €</p>
                                     <p><strong>Quantité disponible:</strong> <?= htmlspecialchars($article['quantiteDispo']) ?></p>
                                 </div>
                             </div>
+
                             <div class="modal-footer">
                                 <form method="post" action="index.php">
                                     <button type="submit" class="btn btn-primary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
