@@ -89,10 +89,9 @@
                         // Vérifier que l'ID et la quantité sont valides
                         if ($articleId > 0 && $quantite > 0) {
                             // Requête pour récupérer les détails de l'article
-                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
+                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.prix, Image.chemin, Image.alt
                                     FROM Article
                                     LEFT JOIN Image ON Article.imageId = Image.id
-                                    LEFT JOIN Categorie ON Article.categorieId = Categorie.id
                                     WHERE Article.id = ?;";
                             
                             // Exécuter la requête paramétrée

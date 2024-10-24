@@ -15,7 +15,6 @@
         isset($_POST['descriptionLongue']) &&
         isset($_POST['prix']) &&
         isset($_POST['quantiteDispo']) &&
-        isset($_POST['categorie']) &&
         isset($_POST['alt']) &&
         isset($_FILES['image'])
     ) {
@@ -25,7 +24,6 @@
         $descriptionLongue = $_POST['descriptionLongue'];
         $prix = $_POST['prix'];
         $quantiteDispo = $_POST['quantiteDispo'];
-        $categorie = $_POST['categorie'];
         $alt = $_POST['alt'];
         $image = $_FILES['image'];
 
@@ -69,11 +67,11 @@
         }
 
         // Ajout de l'article dans la BD
-        $sql = "INSERT INTO Article (titre, description, descriptionLongue, prix, quantiteDispo, categorieId, imageId) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO Article (titre, description, descriptionLongue, prix, quantiteDispo, imageId) 
+                VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssdiii", $titre, $descriptionCourte, $descriptionLongue, $prix, $quantiteDispo, $categorie, $idImage);
+        $stmt->bind_param("sssdii", $titre, $descriptionCourte, $descriptionLongue, $prix, $quantiteDispo, $idImage);
 
         if ($stmt->execute()) {
             echo "Nouvel article ajouté avec succès !";
@@ -120,27 +118,6 @@
             <div class="form-group">
                 <label for="quantiteDispo">Quantité Disponible</label>
                 <input type="number" class="form-control" id="quantiteDispo" name="quantiteDispo" placeholder="Quantité disponible" required>
-            </div>
-            <div class="form-group">
-                <label for="categorie">Catégorie</label>
-                <select class="form-control" id="categorie" name="categorie" required>
-                    <option value="" disabled selected>Sélectionner une catégorie</option>
-                    <!-- Remplir avec les options de catégorie -->
-                    <?php
-                        $sql = "SELECT * FROM Categorie;";
-                        $result = $conn->query($sql);
-                        if (!$result) {
-                            die("Erreur lors de l'exécution de la requête : " . $conn->error);
-                        } else if ($result->num_rows == 0) {
-                            echo "<option>pas de catégories disponibles !</option>";
-                        } else {
-                            // Afficher les options
-                            foreach($result as $categorie){
-                                echo "<option value='" . $categorie['id'] . "'>" . $categorie['nom'] . "</option>";
-                            }
-                        }
-                    ?>
-                </select>
             </div>
             <div class="form-group">
                 <label for="chemin">Texte alternatif à l'image</label>

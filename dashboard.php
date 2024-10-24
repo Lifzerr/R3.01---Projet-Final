@@ -59,10 +59,9 @@ require_once('fonctions.php');
                             }
 
                             // Exécuter la requête
-                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt, Categorie.nom AS categorie
+                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt
                             FROM Article
-                            LEFT JOIN Image ON Article.imageId = Image.id
-                            LEFT JOIN Categorie ON Article.categorieId = Categorie.id; ";
+                            LEFT JOIN Image ON Article.imageId = Image.id; ";
                             $result = $conn->query($sql);
 
                             if (!$result) {
@@ -78,26 +77,25 @@ require_once('fonctions.php');
                             if (
                                 isset($_POST['titre']) &&
                                 isset($_POST['description']) &&
+                                isset($_POST['descriptionLongue']) &&
                                 isset($_POST['prix']) &&
                                 isset($_POST['quantiteDispo']) &&
-                                isset($_POST['categorie']) &&
                                 isset($_POST['alt']) //&&
                                 //isset($_FILES['image'])
                             ) {
                                 $articleId = $_POST['article_id'];
                                 $titre = $_POST['titre'];
                                 $description = $_POST['description'];
+                                $descriptionLongue = $_POST['descriptionLongue'];
                                 $prix = $_POST['prix'];
                                 $quantiteDispo = $_POST['quantiteDispo'];
-                                $categorie = $_POST['categorie'];
                                 $alt = $_POST['alt'];
                                 //$image = $_FILES['image'];
 
                                 //Requete principale
-                                $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Article.imageId, Article.categorieId, Image.id, Image.chemin, Image.alt, Categorie.nom, Categorie.id AS categorie
+                                $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Article.imageId, Image.id, Image.chemin, Image.alt 
                                 FROM Article
                                 LEFT JOIN Image ON Article.imageId = Image.id
-                                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
                                 WHERE Article.id = ?;";
                                 $stmtPrinc = $conn->prepare($sql);
                                 $stmtPrinc->bind_param("i", $articleId);
@@ -111,9 +109,9 @@ require_once('fonctions.php');
                                 }
 
                                 //Modifier les parametres de l'article
-                                $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ? WHERE id = ?";
+                                $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ?, descriptionLongue = ? WHERE id = ?";
                                 $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("ssdii", $titre, $description, $prix, $quantiteDispo, $articleId);
+                                $stmt->bind_param("ssdisi", $titre, $description, $prix, $quantiteDispo, $descriptionLongue, $articleId);
                                 $result = $stmt->execute();
                                 $stmt->close();
 
@@ -126,13 +124,13 @@ require_once('fonctions.php');
                                 // $stmt->close();
 
                                 // //Modifier la categorie de l'article
-                                $sql = "UPDATE Article 
-                                LEFT JOIN Categorie ON Article.categorieId = Categorie.id
-                                SET Article.categorieId = ? WHERE Article.id = ?;";
-                                $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("si", $categorie, $articleId);
-                                $resultat = $stmt->execute();
-                                $stmt->close();
+                                // $sql = "UPDATE Article 
+                                // LEFT JOIN Categorie ON Article.categorieId = Categorie.id
+                                // SET Article.categorieId = ? WHERE Article.id = ?;";
+                                // $stmt = $conn->prepare($sql);
+                                // $stmt->bind_param("si", $categorie, $articleId);
+                                // $resultat = $stmt->execute();
+                                // $stmt->close();
 
                                 // Insertion de l'image dans la BD
                                 $chemin = "images/";
@@ -183,7 +181,7 @@ require_once('fonctions.php');
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="description">Description Longue</label>
-                                                            <textarea class="form-control" id="description" name="description" rows="5" required><?= $article['descriptionLongue'] ?></textarea>
+                                                            <textarea class="form-control" id="descriptionLongue" name="descriptionLongue" rows="5" required><?= $article['descriptionLongue'] ?></textarea>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="prix">Prix (€)</label>
@@ -192,26 +190,6 @@ require_once('fonctions.php');
                                                         <div class="form-group">
                                                             <label for="quantiteDispo">Quantité Disponible</label>
                                                             <input type="number" class="form-control" id="quantiteDispo" name="quantiteDispo" value="<?= $article['quantiteDispo'] ?>" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="categorie">Catégorie</label>
-                                                            <select class="form-control" id="categorie" name="categorie" required>
-                                                                <option value=""> <!-- A MODIFIER PLUS TARD -->
-                                                                    <?php
-                                                                    echo $article['categorie'];
-                                                                    ?>
-                                                                </option>
-                                                                <?php
-                                                                $sql = "SELECT * FROM Categorie;";
-                                                                $result = $conn->query($sql);
-                                                                if ($result && $result->num_rows > 0) {
-                                                                    while ($row = $result->fetch_assoc()) {
-                                                                        $selected = ($row['id'] == $article['categorie']) ? 'selected' : '';
-                                                                        echo "<option value='" . $row['id'] . "' $selected>" . $row['nom'] . "</option>";
-                                                                    }
-                                                                }
-                                                                ?>
-                                                            </select>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="alt">Texte alternatif à l'image</label>

@@ -34,11 +34,9 @@ require_once('fonctions.php');
         }
 
         // Exécuter la requête
-        $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.quantiteDispo, Article.prix, Image.chemin, Image.alt, Categorie.nom AS categorie
+        $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.quantiteDispo, Article.prix, Image.chemin, Image.alt
             FROM Article
-            LEFT JOIN Image ON Article.imageId = Image.id
-            LEFT JOIN Categorie ON Article.categorieId = Categorie.id;
-            ";
+            LEFT JOIN Image ON Article.imageId = Image.id;";
         $result = $conn->query($sql);
         if (!$result) {
             die("Erreur lors de l'exécution de la requête : " . $conn->error);
