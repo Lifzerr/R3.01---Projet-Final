@@ -76,6 +76,7 @@ require_once('fonctions.php');
                 </div>
 
 
+                <!-- Pop-up de détails -->
                 <div class="modal fade" id="fenetreModale-<?= $article['id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content shadow-lg">               
