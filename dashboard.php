@@ -25,7 +25,7 @@ require_once('fonctions.php');
     }
     ?>
 
-    <div class="container mt-5">
+    <div class="container mt-5 pb-5">
         <div id="main" class="card card-body">
             <div class="card-header d-flex justify-content-between">
                 <h2 class="title d-md-inline-flex">Dashboard</h2>
@@ -89,7 +89,6 @@ require_once('fonctions.php');
                                 $prix = $_POST['prix'];
                                 $quantiteDispo = $_POST['quantiteDispo'];
                                 $alt = $_POST['alt'];
-                                //$image = $_FILES['image'];
 
                                 //Requete principale
                                 $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Article.imageId, Image.id, Image.chemin, Image.alt 
@@ -114,53 +113,41 @@ require_once('fonctions.php');
                                 $result = $stmt->execute();
                                 $stmt->close();
 
-                                // Insertion de l'image dans la BD
-                                $chemin = "images/";
-                                $cheminImage = $chemin . $titre . ".jpg";
-                                rename($ancienChemin, $cheminImage);
-                                $sql = "UPDATE Image 
-                                LEFT JOIN Article ON Article.imageId = Image.id
-                                SET chemin = ?, alt = ? WHERE Article.id = ?";
-                                $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("ssi", $cheminImage, $alt, $articleId);
-                                $result = $stmt->execute();
-                                $stmt->close();
-                                header('location: dashboard.php');
                             }
-                            if (isset($_FILES['image'])) {
+                            // Gérer l'image si elle a été changée
+                            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
                                 $image = $_FILES['image'];
                                 $target_dir = "images/";
-                                $target_file = $target_dir . basename($_FILES["image"]["name"]);
 
                                 // Vérifier si le fichier est une image réelle
                                 $check = getimagesize($_FILES["image"]["tmp_name"]);
                                 if ($check !== false) {
-                                    if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                                        echo "L'image " . htmlspecialchars(basename($_FILES["image"]["name"])) . " a été uploadée.";
+                                    // Récupérer l'extension du fichier
+                                    $extension = pathinfo($image['name'], PATHINFO_EXTENSION);
+
+                                    // Renommer l'image avec le titre de l'article
+                                    $nouveauNomImage = $target_dir . $titre . "." . $extension;
+
+                                    // Déplacer l'image uploadée dans le dossier images
+                                    if (move_uploaded_file($image["tmp_name"], $nouveauNomImage)) {
+                                        echo "L'image " . htmlspecialchars($titre) . " a été uploadée et renommée.";
+
+                                        // Insertion de l'image dans la BD
+                                        $sqlImage = "UPDATE Image 
+                                                    LEFT JOIN Article ON Article.imageId = Image.id 
+                                                    SET chemin = ?, alt = ? WHERE Article.id = ?";
+                                        $stmt = $conn->prepare($sqlImage);
+                                        $stmt->bind_param("ssi", $nouveauNomImage, $alt, $articleId);
+                                        $stmt->execute();
+                                        $stmt->close();
                                     } else {
                                         die("Erreur lors de l'upload de l'image.");
                                     }
                                 } else {
-                                    die("Le fichier n'est pas une image.");
+                                    die("Le fichier uploadé n'est pas une image valide.");
                                 }
 
-                                // Insertion de l'image dans la BD
-                                $chemin = "images/";
-                                $nomImage = $image['name'];
-                                $cheminImage = $chemin . $nomImage;
-
-                                $sqlImage = "UPDATE Image SET chemin = ?, alt = ? WHERE id = ?";
-                                $stmt = $conn->prepare($sqlImage);
-                                $stmt->bind_param("ssi", $cheminImage, $alt, $articleId);
-                                $result = $stmt->execute();
-
-                                if ($conn->query($sqlImage) === TRUE) {
-                                    echo "Image ajoutée avec succès !";
-                                } else {
-                                    die("Erreur lors de l'ajout de l'image : " . $conn->error);
-                                }
-                                $stmt->close();
-                                
+                                // Redirection après la mise à jour de l'image
                                 header('location: dashboard.php');
                             }
                             ?>
