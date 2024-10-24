@@ -128,8 +128,39 @@ require_once('fonctions.php');
                                 header('location: dashboard.php');
                             }
                             if (isset($_FILES['image'])) {
-                                
+                                $image = $_FILES['image'];
+                                $target_dir = "images/";
+                                $target_file = $target_dir . basename($_FILES["image"]["name"]);
 
+                                // Vérifier si le fichier est une image réelle
+                                $check = getimagesize($_FILES["image"]["tmp_name"]);
+                                if ($check !== false) {
+                                    if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                                        echo "L'image " . htmlspecialchars(basename($_FILES["image"]["name"])) . " a été uploadée.";
+                                    } else {
+                                        die("Erreur lors de l'upload de l'image.");
+                                    }
+                                } else {
+                                    die("Le fichier n'est pas une image.");
+                                }
+
+                                // Insertion de l'image dans la BD
+                                $chemin = "images/";
+                                $nomImage = $image['name'];
+                                $cheminImage = $chemin . $nomImage;
+
+                                $sqlImage = "UPDATE Image SET chemin = ?, alt = ? WHERE id = ?";
+                                $stmt = $conn->prepare($sqlImage);
+                                $stmt->bind_param("ssi", $cheminImage, $alt, $articleId);
+                                $result = $stmt->execute();
+
+                                if ($conn->query($sqlImage) === TRUE) {
+                                    echo "Image ajoutée avec succès !";
+                                } else {
+                                    die("Erreur lors de l'ajout de l'image : " . $conn->error);
+                                }
+                                $stmt->close();
+                                
                                 header('location: dashboard.php');
                             }
                             ?>
