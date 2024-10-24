@@ -159,3 +159,25 @@ function trouverIndexDesArticles($panier, $article_id)
     }
     return false;
 }
+
+function supprimerFichiersDossier($dossier) {
+    // Vérifier si le dossier existe
+    if (is_dir($dossier)) {
+        // Ouvrir le dossier
+        $fichiers = scandir($dossier);
+
+        // Parcourir chaque fichier dans le dossier
+        foreach ($fichiers as $fichier) {
+            // Ignorer les répertoires spéciaux "." et ".."
+            if ($fichier != '.' && $fichier != '..') {
+                // Chemin complet du fichier
+                $cheminFichier = $dossier . DIRECTORY_SEPARATOR . $fichier;
+
+                // Si c'est un fichier, le supprimer
+                if (is_file($cheminFichier)) {
+                    unlink($cheminFichier);
+                }
+            }
+        }
+    }
+}

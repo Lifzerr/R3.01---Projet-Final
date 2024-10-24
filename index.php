@@ -107,6 +107,7 @@ require_once('fonctions.php');
 
             <?php
             }
+            supprimerFichiersDossier('vignettes');
             $conn->close();
             ?>
 
