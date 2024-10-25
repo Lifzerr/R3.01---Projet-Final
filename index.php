@@ -12,6 +12,14 @@ require_once('fonctions.php');
     <title>War.net | Vente de matériel militaire</title>
     <link rel="stylesheet" href="node_modules\bootstrap\dist\css\bootstrap.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        window.onload = function() {
+            <?php if (isset($_SESSION['paiment_sucess'])): ?>
+                alert("<?php echo $_SESSION['paiment_sucess']; ?>");
+                <?php unset($_SESSION['paiment_sucess']); ?> // Supprimer le message après l'affichage
+            <?php endif; ?>
+        }
+    </script>
 </head>
 
 <body>

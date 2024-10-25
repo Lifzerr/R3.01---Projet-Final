@@ -84,6 +84,7 @@
             $conn->commit(); // Valider la transaction si tout se passe bien
             // Vider le panier après la mise à jour des stocks
             unset($_SESSION['panier']);
+            $_SESSION['paiment_sucess'] = "Paiement effectué avec succès";
         } catch (Exception $e) {
             $conn->rollback(); // Annuler la transaction en cas d'erreur
             throw $e; // Relancer l'exception pour la gérer ailleurs si nécessaire
