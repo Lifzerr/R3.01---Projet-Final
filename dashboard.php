@@ -134,7 +134,7 @@ require_once('fonctions.php');
                                         die("Type de fichier non autorisé. Seules les images JPG, PNG et GIF sont autorisées.");
                                     }
                             
-                                    // Supprimer l'ancienne image
+                                    // Supprimer l'ancienne image - En cas qu'elle n'ait pas le nom modifé par rapport au nom de l'article
                                     $sql = "SELECT chemin FROM Image WHERE id = (SELECT imageId FROM Article WHERE id = ?)";
                                     $stmtPrinc = $conn->prepare($sql);
                                     $stmtPrinc->bind_param("i", $articleId);
@@ -177,7 +177,7 @@ require_once('fonctions.php');
                             
                                 // Redirection après la mise à jour de l'image
                                 header('location: dashboard.php');
-                                exit(); // Toujours ajouter exit après une redirection
+                                exit(); 
                             }
                             
                             ?>
