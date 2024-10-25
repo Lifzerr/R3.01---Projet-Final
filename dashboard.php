@@ -1,6 +1,13 @@
 <?php
-session_start();
-require_once('fonctions.php');
+    session_start();
+    require_once('fonctions.php');
+    // Connection Bd
+    $conn = connectionBD();
+    mysqli_set_charset($conn, "utf8mb4");
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -49,28 +56,6 @@ require_once('fonctions.php');
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            // Connection Bd
-                            $conn = connectionBD();
-                            mysqli_set_charset($conn, "utf8mb4");
-
-                            if ($conn->connect_error) {
-                                die("Connection failed: " . $conn->connect_error);
-                            }
-
-                            // Exécuter la requête
-                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt
-                            FROM Article
-                            LEFT JOIN Image ON Article.imageId = Image.id; ";
-                            $result = $conn->query($sql);
-
-                            if (!$result) {
-                                die("Erreur lors de l'exécution de la requête : " . $conn->error);
-                            }
-                            if ($result->num_rows == 0) {
-                                echo "pas d'articles disponibles !";
-                            }
-                            ?>
 
                             <?php
                             // Enregistrer les modifications
@@ -190,6 +175,21 @@ require_once('fonctions.php');
 
                             <?php
                             // Display les articles
+                           
+
+                            // Exécuter la requête
+                            $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt
+                            FROM Article
+                            LEFT JOIN Image ON Article.imageId = Image.id; ";
+                            $result = $conn->query($sql);
+
+                            if (!$result) {
+                                die("Erreur lors de l'exécution de la requête : " . $conn->error);
+                            }
+                            if ($result->num_rows == 0) {
+                                echo "pas d'articles disponibles !";
+                            }
+
                             foreach ($result as $article) { ?>
                                 <tr>
                                     <th scope="row" class="d-none"><?= $article['id'] ?></th>
