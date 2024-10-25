@@ -85,7 +85,7 @@ require_once('fonctions.php');
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="text-center mt-3">
-                                <img src="<?= htmlspecialchars($article['chemin']) ?>" alt="<?= htmlspecialchars($article['alt']) ?>" class="img-fluid mb-3" style="max-height: 300px;"> <!-- Image responsive -->
+                                <img src="<?= htmlspecialchars($article['chemin']) ?>" alt="<?= htmlspecialchars($article['alt']) ?>" class="img-fluid mb-3 card-img-top" style="max-height: 300px;"> <!-- Image responsive -->
                             </div>
 
                             <div class="modal-body">
@@ -98,7 +98,11 @@ require_once('fonctions.php');
 
                             <div class="modal-footer">
                                 <form method="post" action="index.php">
-                                    <button type="submit" class="btn btn-primary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
+                                    <?php if ($article['quantiteDispo'] == 0) { ?>
+                                        <button type="button" class="btn btn-danger" disabled>Indisponible</button>
+                                    <?php } else { ?>
+                                        <button type="submit" class="btn btn-primary" name="article_id" value="<?= $article['id'] ?>">Ajouter au panier</button>
+                                    <?php } ?>
                                 </form>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                             </div>

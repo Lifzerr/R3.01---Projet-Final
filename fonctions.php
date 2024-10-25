@@ -1,15 +1,16 @@
 <?php
 
-function redimage($img_src, $img_dest, $dst_w, $dst_h) {
-    
-    if(!file_exists($img_src)){
+function redimage($img_src, $img_dest, $dst_w, $dst_h)
+{
+
+    if (!file_exists($img_src)) {
         // Retourner une vignette nulle pour que l'alt s'affiche
         return null;
     }
 
     // Lit les dimensions de l'image
     $size = GetImageSize("$img_src");
-    $src_w = $size[0]; 
+    $src_w = $size[0];
     $src_h = $size[1];
     $mime_type = $size['mime'];
 
@@ -21,7 +22,7 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
     $dst_im = ImageCreateTrueColor($dst_w, $dst_h);
 
     // Choisit la fonction de création de l'image source en fonction du type MIME
-    switch($mime_type) {
+    switch ($mime_type) {
         case 'image/jpeg':
             $src_im = ImageCreateFromJpeg($img_src);
             break;
@@ -42,7 +43,7 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
     ImageCopyResampled($dst_im, $src_im, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
 
     // Sauvegarde la nouvelle image en fonction du format source
-    switch($mime_type) {
+    switch ($mime_type) {
         case 'image/jpeg':
             ImageJpeg($dst_im, $img_dest);
             break;
@@ -62,7 +63,8 @@ function redimage($img_src, $img_dest, $dst_w, $dst_h) {
     return $img_dest;
 }
 
-function connectionBD(): mysqli {
+function connectionBD(): mysqli
+{
     // Détection de l'environnement
     $serverAvailable = @fsockopen("lakartxela.iutbayonne.univ-pau.fr", 3306, $errno, $errstr, 1); // le @ évite que l'erreur de conexion soit affichée, et permet de connecter aux autres si besoin
 
@@ -98,7 +100,8 @@ function connectionBD(): mysqli {
     return $conn;
 }
 
-function genererNav() {
+function genererNav()
+{
     echo '
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -114,27 +117,21 @@ function genererNav() {
                     <li class="nav-item">
                         <a class="nav-link" href="panier.php">Panier</a>
                     </li>';
-    
+
     if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
         echo '
                     <li class="nav-item">
                         <a class="nav-link" href="dashboard.php">Dashboard</a>
                     </li>';
     }
-
-    echo '
-                </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>';
+    echo '</ul>';
 
     if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
         echo '
                 <a href="logout.php" class="btn btn-primary ms-3" tabindex="-1" role="button" aria-disabled="true">Se déconnecter</a>';
     } else {
         echo '
-                <a href="login.html" class="btn btn-primary ms-3" tabindex="-1" role="button" aria-disabled="true">Se connecter</a>';
+                <a href="login.php" class="btn btn-primary ms-3" tabindex="-1" role="button" aria-disabled="true">Se connecter</a>';
     }
 
     echo '
@@ -143,7 +140,8 @@ function genererNav() {
     </nav>';
 }
 
-function genererFooter() {
+function genererFooter()
+{
     echo '<footer class="bg-dark text-white py-4">
     <div class="container">
         <div class="row">
@@ -156,14 +154,14 @@ function genererFooter() {
                 <ul class="list-unstyled">
                     <li><a href="index.php" class="text-white">Accueil</a></li>
                     <li><a href="panier.php" class="text-white">Panier</a></li>';
-                    if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
-                        echo '
+    if (isset($_SESSION['login']) && isset($_SESSION['pwd'])) {
+        echo '
                                 <li><a href="logout.php" class="text-white">Se déconnecter</a></li>';
-                    } else {
-                        echo '
+    } else {
+        echo '
                                 <li><a href="login.html" class="text-white">Se connecter</a></li>';
-                    }
-                    echo '<li><a href="index.php" class="text-white">Contact</a></li>
+    }
+    echo '<li><a href="index.php" class="text-white">Contact</a></li>
                 </ul>
             </div>
             <div class="col-md-4">
@@ -193,4 +191,3 @@ function trouverIndexDesArticles($panier, $article_id)
     }
     return false;
 }
-

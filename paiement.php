@@ -5,6 +5,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['validity']) && isset($_POST['cardNumber'])) {
 
+        // vérifier le n° de la carte
         $numCarte = $_POST['cardNumber'];
         if(!($numCarte[0] == $numCarte[strlen($numCarte) - 1]) && $numCarte){
             $_SESSION['card_error'] = "Le premier et le dernier chiffre du numéro de carte doivent être identiques.";
@@ -15,6 +16,7 @@
         $inputDate = $_POST['validity'];
         $inputParts = explode('/', $inputDate);
     
+        // vérifier le format de la date entrée
         if (count($inputParts) !== 2 || strlen($inputParts[1]) !== 2) {
             $_SESSION['error'] = "Format de date invalide. Utilisez mm/aa.";
             header("Location: " . $_SERVER['PHP_SELF']);

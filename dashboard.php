@@ -1,6 +1,13 @@
 <?php
 session_start();
 require_once('fonctions.php');
+
+// Rediriger si on est pas identifie
+if (!(isset($_SESSION['login']) && isset($_SESSION['pwd']))) {
+    header('location: login.php');
+    exit();
+}
+
 // Connection Bd
 $conn = connectionBD();
 mysqli_set_charset($conn, "utf8mb4");
@@ -131,13 +138,6 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
 
 <body>
     <?php genererNav(); ?>
-
-    <?php
-    // Rediriger si on est pas identifie
-    if (!(isset($_SESSION['login']) && isset($_SESSION['pwd']))) {
-        header('location: login.html');
-    }
-    ?>
 
     <div class="container mt-5 pb-5">
         <div id="main" class="card card-body">
