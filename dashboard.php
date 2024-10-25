@@ -140,6 +140,12 @@ require_once('fonctions.php');
                                     $stmtPrinc->bind_param("i", $articleId);
                                     $stmtPrinc->execute();
                                     $result = $stmtPrinc->get_result();
+
+                                    // Suppression de l'ancienne vignette
+                                    $cheminVignette = str_replace('images/', 'vignettes/', $cheminImage);
+                                    if(file_exists($cheminVignette)){
+                                        unlink($cheminVignette);
+                                    }
                             
                                     if ($result->num_rows > 0) {
                                         $imageData = $result->fetch_assoc();
