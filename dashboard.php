@@ -1,13 +1,120 @@
 <?php
-    session_start();
-    require_once('fonctions.php');
-    // Connection Bd
-    $conn = connectionBD();
-    mysqli_set_charset($conn, "utf8mb4");
+session_start();
+require_once('fonctions.php');
+// Connection Bd
+$conn = connectionBD();
+mysqli_set_charset($conn, "utf8mb4");
 
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Enregistrer les modifications
+if (
+    isset($_POST['titre']) &&
+    isset($_POST['description']) &&
+    isset($_POST['descriptionLongue']) &&
+    isset($_POST['prix']) &&
+    isset($_POST['quantiteDispo']) &&
+    isset($_POST['alt'])
+) {
+    $articleId = $_POST['article_id'];
+    $titre = $_POST['titre'];
+    $description = $_POST['description'];
+    $descriptionLongue = $_POST['descriptionLongue'];
+    $prix = $_POST['prix'];
+    $quantiteDispo = $_POST['quantiteDispo'];
+    $alt = $_POST['alt'];
+
+    //Requete principale
+    $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Article.imageId, Image.id, Image.chemin, Image.alt 
+        FROM Article
+        LEFT JOIN Image ON Article.imageId = Image.id
+        WHERE Article.id = ?;";
+    $stmtPrinc = $conn->prepare($sql);
+    $stmtPrinc->bind_param("i", $articleId);
+    $stmtPrinc->execute();
+    $result = $stmtPrinc->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        // Récupérer les valeurs des colonnes
+        $articleTitre = $row['titre'];
+        $ancienChemin = "images/" . $articleTitre . ".jpg";
     }
+
+    //Modifier les parametres de l'article
+    $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ?, descriptionLongue = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssdisi", $titre, $description, $prix, $quantiteDispo, $descriptionLongue, $articleId);
+    $result = $stmt->execute();
+    $stmt->close();
+}
+if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+    $image = $_FILES['image'];
+    $target_dir = "images/";
+
+    // Vérification des erreurs d'upload
+    if ($image['error'] !== UPLOAD_ERR_OK) {
+        die("Erreur lors de l'upload de l'image : " . $image['error']);
+    }
+
+    // Vérifier si le fichier est une image réelle
+    $check = getimagesize($image["tmp_name"]);
+    if ($check !== false) {
+        // Récupérer l'extension du fichier
+        $extension = pathinfo($image['name'], PATHINFO_EXTENSION);
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (!in_array(strtolower($extension), $allowed_extensions)) {
+            die("Type de fichier non autorisé. Seules les images JPG, PNG et GIF sont autorisées.");
+        }
+
+        // Supprimer l'ancienne image - En cas qu'elle n'ait pas le nom modifé par rapport au nom de l'article
+        $sql = "SELECT chemin FROM Image WHERE id = (SELECT imageId FROM Article WHERE id = ?)";
+        $stmtPrinc = $conn->prepare($sql);
+        $stmtPrinc->bind_param("i", $articleId);
+        $stmtPrinc->execute();
+        $result = $stmtPrinc->get_result();
+
+        if ($result->num_rows > 0) {
+            $imageData = $result->fetch_assoc();
+            $ancienneImage = $imageData['chemin'];
+
+            // Vérifier si l'ancienne image existe et la supprimer
+            if (file_exists($ancienneImage)) {
+                unlink($ancienneImage);
+            }
+        }
+
+        // Renommer l'image avec le titre de l'article
+        $nouveauNomImage = $target_dir . $titre . "." . $extension;
+
+        // Déplacer l'image uploadée dans le dossier images
+        if (!move_uploaded_file($image["tmp_name"], $nouveauNomImage)) {
+            die("Erreur lors de l'upload de l'image. Vérifiez les permissions et le chemin.");
+        }
+
+        // Insertion de l'image dans la BD
+        $sqlImage = "UPDATE Image 
+                        LEFT JOIN Article ON Article.imageId = Image.id 
+                        SET chemin = ?, alt = ? WHERE Article.id = ?";
+        $stmt = $conn->prepare($sqlImage);
+        $stmt->bind_param("ssi", $nouveauNomImage, $alt, $articleId);
+
+        if ($stmt->execute() === false) {
+            die("Erreur lors de la mise à jour de l'image dans la base de données : " . $stmt->error);
+        }
+
+        $stmt->close();
+    } else {
+        die("Le fichier uploadé n'est pas une image valide.");
+    }
+
+    // Redirection après la mise à jour de l'image
+    header('location: dashboard.php');
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -57,125 +164,11 @@
                         </thead>
                         <tbody>
 
-                            <?php
-                            // Enregistrer les modifications
-                            if (
-                                isset($_POST['titre']) &&
-                                isset($_POST['description']) &&
-                                isset($_POST['descriptionLongue']) &&
-                                isset($_POST['prix']) &&
-                                isset($_POST['quantiteDispo']) &&
-                                isset($_POST['alt'])
-                            ) {
-                                $articleId = $_POST['article_id'];
-                                $titre = $_POST['titre'];
-                                $description = $_POST['description'];
-                                $descriptionLongue = $_POST['descriptionLongue'];
-                                $prix = $_POST['prix'];
-                                $quantiteDispo = $_POST['quantiteDispo'];
-                                $alt = $_POST['alt'];
 
-                                //Requete principale
-                                $sql = "SELECT Article.id, Article.titre, Article.description, Article.quantiteDispo, Article.prix, Article.imageId, Image.id, Image.chemin, Image.alt 
-                                FROM Article
-                                LEFT JOIN Image ON Article.imageId = Image.id
-                                WHERE Article.id = ?;";
-                                $stmtPrinc = $conn->prepare($sql);
-                                $stmtPrinc->bind_param("i", $articleId);
-                                $stmtPrinc->execute();
-                                $result = $stmtPrinc->get_result();
-
-                                if ($row = $result->fetch_assoc()) {
-                                    // Récupérer les valeurs des colonnes
-                                    $articleTitre = $row['titre'];
-                                    $ancienChemin = "images/" . $articleTitre . ".jpg";
-                                }
-
-                                //Modifier les parametres de l'article
-                                $sql = "UPDATE Article SET titre = ?, description = ?, prix = ?, quantiteDispo = ?, descriptionLongue = ? WHERE id = ?";
-                                $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("ssdisi", $titre, $description, $prix, $quantiteDispo, $descriptionLongue, $articleId);
-                                $result = $stmt->execute();
-                                $stmt->close();
-
-                            }
-                            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-                                $image = $_FILES['image'];
-                                $target_dir = "images/";
-                            
-                                // Vérification des erreurs d'upload
-                                if ($image['error'] !== UPLOAD_ERR_OK) {
-                                    die("Erreur lors de l'upload de l'image : " . $image['error']);
-                                }
-                            
-                                // Vérifier si le fichier est une image réelle
-                                $check = getimagesize($image["tmp_name"]);
-                                if ($check !== false) {
-                                    // Récupérer l'extension du fichier
-                                    $extension = pathinfo($image['name'], PATHINFO_EXTENSION);
-                                    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-                            
-                                    if (!in_array(strtolower($extension), $allowed_extensions)) {
-                                        die("Type de fichier non autorisé. Seules les images JPG, PNG et GIF sont autorisées.");
-                                    }
-                            
-                                    // Supprimer l'ancienne image - En cas qu'elle n'ait pas le nom modifé par rapport au nom de l'article
-                                    $sql = "SELECT chemin FROM Image WHERE id = (SELECT imageId FROM Article WHERE id = ?)";
-                                    $stmtPrinc = $conn->prepare($sql);
-                                    $stmtPrinc->bind_param("i", $articleId);
-                                    $stmtPrinc->execute();
-                                    $result = $stmtPrinc->get_result();
-
-                                    // Suppression de l'ancienne vignette
-                                    $cheminVignette = str_replace('images/', 'vignettes/', $cheminImage);
-                                    if(file_exists($cheminVignette)){
-                                        unlink($cheminVignette);
-                                    }
-                            
-                                    if ($result->num_rows > 0) {
-                                        $imageData = $result->fetch_assoc();
-                                        $ancienneImage = $imageData['chemin'];
-                            
-                                        // Vérifier si l'ancienne image existe et la supprimer
-                                        if (file_exists($ancienneImage)) {
-                                            unlink($ancienneImage);
-                                        }
-                                    }
-                            
-                                    // Renommer l'image avec le titre de l'article
-                                    $nouveauNomImage = $target_dir . $titre . "." . $extension;
-                            
-                                    // Déplacer l'image uploadée dans le dossier images
-                                    if (!move_uploaded_file($image["tmp_name"], $nouveauNomImage)) {
-                                        die("Erreur lors de l'upload de l'image. Vérifiez les permissions et le chemin.");
-                                    }
-                            
-                                    // Insertion de l'image dans la BD
-                                    $sqlImage = "UPDATE Image 
-                                                LEFT JOIN Article ON Article.imageId = Image.id 
-                                                SET chemin = ?, alt = ? WHERE Article.id = ?";
-                                    $stmt = $conn->prepare($sqlImage);
-                                    $stmt->bind_param("ssi", $nouveauNomImage, $alt, $articleId);
-                                    
-                                    if ($stmt->execute() === false) {
-                                        die("Erreur lors de la mise à jour de l'image dans la base de données : " . $stmt->error);
-                                    }
-                            
-                                    $stmt->close();
-                                } else {
-                                    die("Le fichier uploadé n'est pas une image valide.");
-                                }
-                            
-                                // Redirection après la mise à jour de l'image
-                                header('location: dashboard.php');
-                                exit(); 
-                            }
-                            
-                            ?>
 
                             <?php
                             // Display les articles
-                           
+
 
                             // Exécuter la requête
                             $sql = "SELECT Article.id, Article.titre, Article.description, Article.descriptionLongue, Article.prix, Article.quantiteDispo, Image.chemin, Image.alt
