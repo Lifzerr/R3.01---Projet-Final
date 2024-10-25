@@ -96,7 +96,7 @@
 </head>
 <body>
     <?php genererNav(); ?>
-    <div class="container mt-5">
+    <div class="container mt-5 min-vh-100">
         <h2>Ajouter un Matériel</h2>
         <form action="ajout-materiel.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
@@ -125,7 +125,7 @@
             </div>
             <div class="form-group">
                 <label for="image">Uploader une image</label>
-                <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+                <input type="file" class="form-control-file" id="image" name="image" accept="image/*" required>
             </div>
             <button type="submit" class="btn btn-primary">Ajouter le matériel</button>
         </form>

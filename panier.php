@@ -21,8 +21,6 @@
         // Vider le panier
         unset($_SESSION['panier']);
 
-        // Réponse à envoyer au client
-        echo "Panier vidé";
         exit;
     }
 ?>
@@ -34,10 +32,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site de vente en ligne</title>
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    
 </head>
 <body>
     <?php genererNav(); ?>
-    <div class="d-flex flex-column min-vh-100"> <!-- Conteneur principal -->
+    <div class="d-flex flex-column min-vh-100">
         <main class="flex-grow-1">
             <div class="container mt-5">
                 <div id="main" class="card card-body">
@@ -130,7 +130,7 @@
                         }
                     }
 
-                    $conn->close(); // Fermer la connexion après avoir traité tous les articles
+                    $conn->close(); 
                     ?>                
                     </tbody>
                     </table>    
@@ -173,6 +173,9 @@
         </main>
         <?php genererFooter(); ?>
     </div>
+
     <script src="js/scriptPanier.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

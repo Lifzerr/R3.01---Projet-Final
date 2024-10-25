@@ -7,7 +7,7 @@
 
         $numCarte = $_POST['cardNumber'];
         if(!($numCarte[0] == $numCarte[strlen($numCarte) - 1]) && $numCarte){
-            $_SESSION['card_error'] = "Le numéro de carte doit avoir la même première et dernière valeur.";
+            $_SESSION['card_error'] = "Le premier et le dernier chiffre du numéro de carte doivent être identiques.";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
         }
@@ -43,7 +43,7 @@
             header("Location: index.php");
             exit();
         } else {
-            $_SESSION['date_error'] = "La date d'expiration ne peut pas être supérieure à 3 mois.";
+            $_SESSION['date_error'] = "La date d'expiration doit être ultérieure à la date actuelle de 3 mois.";
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
         }
